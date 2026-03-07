@@ -1,0 +1,6 @@
+wpmove/
+tools/pull-config.json
+
+# local noise
+*.log
+.DS_Store

@@ -1,0 +1,27 @@
+{
+    "name": "flywp/flywp-migrator",
+    "description": "Migrate your WordPress site to FlyWP",
+    "type": "wordpress-plugin",
+    "license": "GPLv3",
+    "autoload": {
+        "psr-4": {
+            "FlyWP\\Migrator\\": "includes/"
+        }
+    },
+    "authors": [
+        {
+            "name": "FlyWP Team",
+            "email": "support@flywp.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require-dev": {
+        "tareq1988/wp-php-cs-fixer": "dev-master",
+        "wp-coding-standards/wpcs": "dev-develop"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
+}
