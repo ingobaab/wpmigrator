@@ -1,6 +1,6 @@
 <?php return array(
     'root' => array(
-        'name' => 'flywp/flywp-migrator',
+        'name' => 'migwp/migwp-migrator',
         'pretty_version' => '1.3.0',
         'version' => '1.3.0.0',
         'reference' => 'c5940b5a02f2291ae670ee98cb85aa7eaed0a590',
@@ -10,7 +10,7 @@
         'dev' => false,
     ),
     'versions' => array(
-        'flywp/flywp-migrator' => array(
+        'migwp/migwp-migrator' => array(
             'pretty_version' => '1.3.0',
             'version' => '1.3.0.0',
             'reference' => 'c5940b5a02f2291ae670ee98cb85aa7eaed0a590',

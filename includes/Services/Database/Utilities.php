@@ -1,6 +1,6 @@
 <?php
 
-namespace FlyWP\Migrator\Services\Database;
+namespace MigWP\Migrator\Services\Database;
 
 /**
  * Database utility functions

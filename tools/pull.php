@@ -7,7 +7,7 @@ if ( PHP_SAPI !== 'cli' ) {
 	exit( 1 );
 }
 
-$config_path                = flywp_puller_default_config_path();
+$config_path                = migwp_puller_default_config_path();
 $cli_poll_interval_seconds  = null;
 
 for ( $i = 1; $i < $argc; $i++ ) {
@@ -34,7 +34,7 @@ for ( $i = 1; $i < $argc; $i++ ) {
 }
 
 try {
-	$config = flywp_puller_load_config( $config_path, $cli_poll_interval_seconds );
+	$config = migwp_puller_load_config( $config_path, $cli_poll_interval_seconds );
 
 	echo "Base URL: {$config['base_url']}\n";
 	echo "REST root: {$config['rest_root']}\n";
@@ -46,7 +46,7 @@ try {
 		'filesystem' => null,
 	];
 
-	flywp_puller_run(
+	migwp_puller_run(
 		$config,
 		static function ( $event, array $payload ) use ( &$last_snapshot_digest ) {
 			if ( 'snapshot.progress' === $event ) {
@@ -69,11 +69,11 @@ try {
 
 				if ( null === $last_snapshot_digest[ $key ] ) {
 					echo "\n== {$label} ==\n";
-					echo 'Starting via /flywp-migrator/v1/snapshot/' . $key . "\n";
+					echo 'Starting via /migwp-migrator/v1/snapshot/' . $key . "\n";
 				}
 
 				if ( $digest !== $last_snapshot_digest[ $key ] ) {
-					flywp_puller_print_snapshot_progress( $label, $status );
+					migwp_puller_print_snapshot_progress( $label, $status );
 					$last_snapshot_digest[ $key ] = $digest;
 				}
 
@@ -98,7 +98,7 @@ try {
 			}
 
 			if ( 'transfer.progress' === $event ) {
-				flywp_puller_print_transfer_progress(
+				migwp_puller_print_transfer_progress(
 					'Transfer',
 					(int) $payload['downloaded_bytes'],
 					(int) $payload['size'],

@@ -1,6 +1,6 @@
 <?php
 
-namespace FlyWP\Migrator\Services\Database;
+namespace MigWP\Migrator\Services\Database;
 
 /**
  * Job Scheduler for async backup operations
@@ -11,7 +11,7 @@ class Scheduler {
 	/**
 	 * Cron hook name for backup resume
 	 */
-	const CRON_HOOK = 'flywp_backup_resume';
+	const CRON_HOOK = 'migwp_backup_resume';
 
 	/**
 	 * Initialize the scheduler

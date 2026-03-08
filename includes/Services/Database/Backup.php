@@ -1,6 +1,6 @@
 <?php
 
-namespace FlyWP\Migrator\Services\Database;
+namespace MigWP\Migrator\Services\Database;
 
 use WP_Error;
 
@@ -128,7 +128,7 @@ class Backup
 	private function setup_backup_dir()
 	{
 		$upload_dir       = wp_upload_dir();
-		$this->backup_dir = $upload_dir['basedir'].'/flywp-migrator';
+		$this->backup_dir = $upload_dir['basedir'].'/migwp-migrator';
 
 		if (! file_exists($this->backup_dir)) {
 			wp_mkdir_p($this->backup_dir);
@@ -465,7 +465,7 @@ class Backup
 		$wp_upload_dir = wp_upload_dir();
 
 		$this->stow("# WordPress MySQL database backup\n");
-		$this->stow("# Created by FlyWP Migrator (https://flywp.com)\n");
+		$this->stow("# Created by MigWP Migrator (https://migwp.com)\n");
 		$this->stow("# WordPress Version: $wp_version, running on PHP ".phpversion().", MySQL $mysql_version\n");
 		$this->stow('# Backup of: '.untrailingslashit(site_url())."\n");
 		$this->stow('# Home URL: '.untrailingslashit(home_url())."\n");
@@ -523,7 +523,7 @@ class Backup
 			$exec = 'cd '.escapeshellarg($this->backup_dir).'; ';
 		}
 
-		$msqld_max_allowed_packet = (defined('FLYWP_MYSQLDUMP_MAX_ALLOWED_PACKET') && (is_int(FLYWP_MYSQLDUMP_MAX_ALLOWED_PACKET) || is_string(FLYWP_MYSQLDUMP_MAX_ALLOWED_PACKET))) ? FLYWP_MYSQLDUMP_MAX_ALLOWED_PACKET : '64M';
+		$msqld_max_allowed_packet = (defined('MIGWP_MYSQLDUMP_MAX_ALLOWED_PACKET') && (is_int(MIGWP_MYSQLDUMP_MAX_ALLOWED_PACKET) || is_string(MIGWP_MYSQLDUMP_MAX_ALLOWED_PACKET))) ? MIGWP_MYSQLDUMP_MAX_ALLOWED_PACKET : '64M';
 
 		$exec .= "$potsql --defaults-file=$pfile --max-allowed-packet=$msqld_max_allowed_packet --quote-names --add-drop-table";
 

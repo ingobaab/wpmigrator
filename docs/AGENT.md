@@ -1,4 +1,4 @@
-# FlyWP Migrator Notes
+# MigWP Migrator Notes
 
 ## Purpose
 
@@ -33,7 +33,7 @@ Used for all snapshot creation and transfer endpoints.
 
 This phase uses the migration key via:
 
-- `X-FlyWP-Key`
+- `X-MigWP-Key`
 - or `secret`
 
 The migration key is the long-lived shared secret, but it is not used directly as the archive encryption key.
@@ -58,8 +58,8 @@ The database snapshot is staging data only. It is not the final transfer artifac
 
 ### Database snapshot
 
-- `POST /flywp-migrator/v1/snapshot/database`
-- `GET /flywp-migrator/v1/snapshot/database`
+- `POST /migwp-migrator/v1/snapshot/database`
+- `GET /migwp-migrator/v1/snapshot/database`
 
 Behavior:
 
@@ -70,8 +70,8 @@ Behavior:
 
 ### Filesystem snapshot
 
-- `POST /flywp-migrator/v1/snapshot/filesystem`
-- `GET /flywp-migrator/v1/snapshot/filesystem`
+- `POST /migwp-migrator/v1/snapshot/filesystem`
+- `GET /migwp-migrator/v1/snapshot/filesystem`
 
 Behavior:
 
@@ -83,8 +83,8 @@ Behavior:
 
 ### Snapshot config
 
-- `GET /flywp-migrator/v1/snapshot/config`
-- `POST /flywp-migrator/v1/snapshot/config`
+- `GET /migwp-migrator/v1/snapshot/config`
+- `POST /migwp-migrator/v1/snapshot/config`
 
 This config applies to future filesystem snapshots only.
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace FlyWP\Migrator\Services\Snapshots;
+namespace MigWP\Migrator\Services\Snapshots;
 
 use WP_Error;
 
@@ -53,7 +53,7 @@ class StateStore {
 		if ( ! wp_mkdir_p( $dir ) ) {
 			return new WP_Error(
 				'snapshot_state_directory_unwritable',
-				__( 'Could not create snapshot state directory', 'flywp-migrator' ),
+				__( 'Could not create snapshot state directory', 'migwp-migrator' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -64,7 +64,7 @@ class StateStore {
 		if ( false === file_put_contents( $temp_file, (string) $payload, LOCK_EX ) ) {
 			return new WP_Error(
 				'snapshot_state_write_failed',
-				__( 'Could not write snapshot state', 'flywp-migrator' ),
+				__( 'Could not write snapshot state', 'migwp-migrator' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -74,7 +74,7 @@ class StateStore {
 
 			return new WP_Error(
 				'snapshot_state_commit_failed',
-				__( 'Could not finalize snapshot state', 'flywp-migrator' ),
+				__( 'Could not finalize snapshot state', 'migwp-migrator' ),
 				[ 'status' => 500 ]
 			);
 		}

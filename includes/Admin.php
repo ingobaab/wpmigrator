@@ -1,6 +1,6 @@
 <?php
 
-namespace FlyWP\Migrator;
+namespace MigWP\Migrator;
 
 class Admin {
 
@@ -18,10 +18,10 @@ class Admin {
      */
     public function admin_menu() {
         $hook = add_menu_page(
-            __( 'FlyWP Migrator', 'flywp-migrator' ),
-            __( 'FlyWP Migrator', 'flywp-migrator' ),
+            __( 'MigWP Migrator', 'migwp-migrator' ),
+            __( 'MigWP Migrator', 'migwp-migrator' ),
             'manage_options',
-            'flywp-migrator',
+            'migwp-migrator',
             [$this, 'plugin_page'],
             'dashicons-migrate',
         );
@@ -38,21 +38,21 @@ class Admin {
      */
     public function enqueue_scripts() {
         wp_register_style(
-            'flywp-migrator-styles',
+            'migwp-migrator-styles',
             plugin_dir_url( __DIR__ ) . 'assets/css/admin.css',
             [],
-            FLYWP_MIGRATOR_VERSION
+            MIGWP_MIGRATOR_VERSION
         );
-        wp_enqueue_style( 'flywp-migrator-styles' );
+        wp_enqueue_style( 'migwp-migrator-styles' );
 
         wp_register_script(
-            'flywp-migrator-scripts',
+            'migwp-migrator-scripts',
             plugin_dir_url( __DIR__ ) . 'assets/js/admin.js',
             ['jquery'],
-            FLYWP_MIGRATOR_VERSION,
+            MIGWP_MIGRATOR_VERSION,
             true
         );
-        wp_enqueue_script( 'flywp-migrator-scripts' );
+        wp_enqueue_script( 'migwp-migrator-scripts' );
     }
 
     /**
@@ -63,7 +63,7 @@ class Admin {
     public function get_migration_key() {
         global $wpdb;
 
-        $key          = flywp_migrator()->get_migration_key();
+        $key          = migwp_migrator()->get_migration_key();
         $site_url     = home_url();
         $is_multisite = is_multisite() ? 'multisite' : 'single';
 
@@ -82,48 +82,48 @@ class Admin {
     public function plugin_page() {
         ?>
         <div class="wrap">
-            <div class="flywp-card">
-                <div class="flywp-header">
-                    <div class="flywp-logo">
+            <div class="migwp-card">
+                <div class="migwp-header">
+                    <div class="migwp-logo">
                         <span class="dashicons dashicons-migrate"></span>
                     </div>
                     <div>
-                        <h1 class="flywp-title"><?php esc_html_e( 'FlyWP Migrator', 'flywp-migrator' ); ?></h1>
-                        <p class="flywp-description"><?php esc_html_e( 'Migrate your site to FlyWP', 'flywp-migrator' ); ?></p>
+                        <h1 class="migwp-title"><?php esc_html_e( 'MigWP Migrator', 'migwp-migrator' ); ?></h1>
+                        <p class="migwp-description"><?php esc_html_e( 'Migrate your site to MigWP', 'migwp-migrator' ); ?></p>
                     </div>
                 </div>
 
-                <div class="flywp-instructions">
-                    <h2><?php esc_html_e( 'Migration Instructions', 'flywp-migrator' ); ?></h2>
+                <div class="migwp-instructions">
+                    <h2><?php esc_html_e( 'Migration Instructions', 'migwp-migrator' ); ?></h2>
                     <ol>
-                        <li><?php esc_html_e( 'Copy the migration key below using the copy button.', 'flywp-migrator' ); ?></li>
-                        <li><?php esc_html_e( 'Go to your FlyWP dashboard.', 'flywp-migrator' ); ?></li>
-                        <li><?php printf( wp_kses_post( __( 'Click the "<strong>Create New Site</strong>" button.', 'flywp-migrator' ) ) ); ?></li>
-                        <li><?php printf( wp_kses_post( __( 'Select "<strong>Import Site</strong>" option.', 'flywp-migrator' ) ) ); ?></li>
-                        <li><?php esc_html_e( 'Paste your migration key in the provided field.', 'flywp-migrator' ); ?></li>
-                        <li><?php esc_html_e( 'Follow the remaining steps in the FlyWP migration wizard to complete the process.', 'flywp-migrator' ); ?></li>
+                        <li><?php esc_html_e( 'Copy the migration key below using the copy button.', 'migwp-migrator' ); ?></li>
+                        <li><?php esc_html_e( 'Go to your MigWP dashboard.', 'migwp-migrator' ); ?></li>
+                        <li><?php printf( wp_kses_post( __( 'Click the "<strong>Create New Site</strong>" button.', 'migwp-migrator' ) ) ); ?></li>
+                        <li><?php printf( wp_kses_post( __( 'Select "<strong>Import Site</strong>" option.', 'migwp-migrator' ) ) ); ?></li>
+                        <li><?php esc_html_e( 'Paste your migration key in the provided field.', 'migwp-migrator' ); ?></li>
+                        <li><?php esc_html_e( 'Follow the remaining steps in the MigWP migration wizard to complete the process.', 'migwp-migrator' ); ?></li>
                     </ol>
                 </div>
                 
-                <div class="flywp-form-row">
-                    <label for="migration_key" class="flywp-label">
-                        <?php esc_html_e( 'Migration Key', 'flywp-migrator' ); ?>
+                <div class="migwp-form-row">
+                    <label for="migration_key" class="migwp-label">
+                        <?php esc_html_e( 'Migration Key', 'migwp-migrator' ); ?>
                     </label>
-                    <div class="flywp-input-wrapper">
+                    <div class="migwp-input-wrapper">
                         <input type="password" 
-                            id="flywp-migration-key" 
+                            id="migwp-migration-key" 
                             name="migration_key" 
                             value="<?php echo esc_attr( $this->get_migration_key() ); ?>" 
-                            class="flywp-input"
+                            class="migwp-input"
                             required
                         >
 
-                        <div class="flywp-buttons-wrapper">
-                            <button type="button" class="flywp-toggle-password" aria-label="<?php esc_attr_e( 'Toggle password visibility', 'flywp-migrator' ); ?>">
+                        <div class="migwp-buttons-wrapper">
+                            <button type="button" class="migwp-toggle-password" aria-label="<?php esc_attr_e( 'Toggle password visibility', 'migwp-migrator' ); ?>">
                                 <span class="dashicons dashicons-visibility"></span>
                             </button>
 
-                            <button type="button" class="flywp-copy-clipboard" aria-label="<?php esc_attr_e( 'Copy migration key to clipboard', 'flywp-migrator' ); ?>">
+                            <button type="button" class="migwp-copy-clipboard" aria-label="<?php esc_attr_e( 'Copy migration key to clipboard', 'migwp-migrator' ); ?>">
                                 <span class="dashicons dashicons-admin-page"></span>
                                 <span>Copy</span>
                             </button>

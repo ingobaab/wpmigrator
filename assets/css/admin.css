@@ -1,8 +1,8 @@
 /**
- * FlyWP Migration Admin Styles
+ * MigWP Migration Admin Styles
  */
 
-.flywp-card {
+.migwp-card {
     background: #fff;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
@@ -11,13 +11,13 @@
     max-width: 800px;
 }
 
-.flywp-header {
+.migwp-header {
     display: flex;
     align-items: center;
     margin-bottom: 30px;
 }
 
-.flywp-logo {
+.migwp-logo {
     background-color: #2271b1;
     color: white;
     width: 50px;
@@ -30,31 +30,31 @@
     font-size: 24px;
 }
 
-.flywp-title {
+.migwp-title {
     margin: 0;
     color: #1d2327;
     font-size: 24px;
     font-weight: 600;
 }
 
-.flywp-description {
+.migwp-description {
     color: #646970;
     margin: 5px 0 0 0;
     font-size: 14px;
 }
 
-.flywp-form-row {
+.migwp-form-row {
     margin-bottom: 25px;
 }
 
-.flywp-label {
+.migwp-label {
     display: block;
     margin-bottom: 8px;
     font-weight: 500;
     color: #1d2327;
 }
 
-.flywp-input-wrapper {
+.migwp-input-wrapper {
     position: relative;
     display: flex;
     align-items: center;
@@ -64,7 +64,7 @@
     padding: 3px 0;
 }
 
-.flywp-input {
+.migwp-input {
     flex: 1;
     width: auto;
     padding: 10px 15px;
@@ -74,13 +74,13 @@
     background-color: #fff;
 }
 
-.flywp-input:focus {
+.migwp-input:focus {
     border-color: #2271b1;
     box-shadow: 0 0 0 1px #2271b1;
     outline: none;
 }
 
-.flywp-buttons-wrapper {
+.migwp-buttons-wrapper {
     position: static;
     display: flex;
     align-items: center;
@@ -90,8 +90,8 @@
     white-space: nowrap;
 }
 
-.flywp-copy-clipboard,
-.flywp-toggle-password {
+.migwp-copy-clipboard,
+.migwp-toggle-password {
     border: 1px solid #dcdcde;
     border-radius: 5px;
     padding: 5px;
@@ -103,10 +103,10 @@
     padding: 5px;
 }
 
-.flywp-copy-clipboard span {
+.migwp-copy-clipboard span {
     transition: color 0.2s ease;
 }
 
-.flywp-copy-clipboard.copied span {
+.migwp-copy-clipboard.copied span {
     color: #0a6d12;
 }

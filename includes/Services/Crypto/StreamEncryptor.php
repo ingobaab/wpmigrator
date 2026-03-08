@@ -1,6 +1,6 @@
 <?php
 
-namespace FlyWP\Migrator\Services\Crypto;
+namespace MigWP\Migrator\Services\Crypto;
 
 use WP_Error;
 
@@ -30,7 +30,7 @@ class StreamEncryptor {
 		if ( ! extension_loaded( 'sodium' ) ) {
 			return new WP_Error(
 				'snapshot_encryption_unavailable',
-				__( 'The sodium extension is required for snapshot encryption', 'flywp-migrator' ),
+				__( 'The sodium extension is required for snapshot encryption', 'migwp-migrator' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -69,7 +69,7 @@ class StreamEncryptor {
 
 			return new WP_Error(
 				'snapshot_encryption_io_error',
-				__( 'Could not open snapshot files for encryption', 'flywp-migrator' ),
+				__( 'Could not open snapshot files for encryption', 'migwp-migrator' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -89,7 +89,7 @@ class StreamEncryptor {
 
 				return new WP_Error(
 					'snapshot_encryption_read_failed',
-					__( 'Could not read snapshot source during encryption', 'flywp-migrator' ),
+					__( 'Could not read snapshot source during encryption', 'migwp-migrator' ),
 					[ 'status' => 500 ]
 				);
 			}

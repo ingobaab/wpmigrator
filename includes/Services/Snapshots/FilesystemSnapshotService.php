@@ -1,8 +1,8 @@
 <?php
 
-namespace FlyWP\Migrator\Services\Snapshots;
+namespace MigWP\Migrator\Services\Snapshots;
 
-use FlyWP\Migrator\Services\Crypto\KeyDeriver;
+use MigWP\Migrator\Services\Crypto\KeyDeriver;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use WP_Error;
@@ -74,7 +74,7 @@ class FilesystemSnapshotService {
 		if ( empty( $db_state ) || 'complete' !== ( $db_state['status'] ?? '' ) || empty( $db_state['artifact_file'] ) || ! is_file( $db_state['artifact_file'] ) ) {
 			return new WP_Error(
 				'filesystem_snapshot_requires_database_snapshot',
-				__( 'A completed database snapshot is required before creating a filesystem snapshot', 'flywp-migrator' ),
+				__( 'A completed database snapshot is required before creating a filesystem snapshot', 'migwp-migrator' ),
 				[ 'status' => 409 ]
 			);
 		}
@@ -82,7 +82,7 @@ class FilesystemSnapshotService {
 		if ( ! extension_loaded( 'sodium' ) ) {
 			return new WP_Error(
 				'snapshot_encryption_unavailable',
-				__( 'The sodium extension is required for filesystem snapshots', 'flywp-migrator' ),
+				__( 'The sodium extension is required for filesystem snapshots', 'migwp-migrator' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -121,7 +121,7 @@ class FilesystemSnapshotService {
 		if ( empty( $state ) || empty( $state['worker_token'] ) || $state['worker_token'] !== $worker_token ) {
 			return new WP_Error(
 				'snapshot_worker_token_invalid',
-				__( 'Filesystem snapshot worker token is invalid or superseded', 'flywp-migrator' ),
+				__( 'Filesystem snapshot worker token is invalid or superseded', 'migwp-migrator' ),
 				[ 'status' => 409 ]
 			);
 		}
@@ -131,7 +131,7 @@ class FilesystemSnapshotService {
 		if ( empty( $db_state ) || 'complete' !== ( $db_state['status'] ?? '' ) || empty( $db_state['artifact_file'] ) || ! is_file( $db_state['artifact_file'] ) ) {
 			return new WP_Error(
 				'filesystem_snapshot_requires_database_snapshot',
-				__( 'A completed database snapshot is required before creating a filesystem snapshot', 'flywp-migrator' ),
+				__( 'A completed database snapshot is required before creating a filesystem snapshot', 'migwp-migrator' ),
 				[ 'status' => 409 ]
 			);
 		}
@@ -139,7 +139,7 @@ class FilesystemSnapshotService {
 		if ( ! extension_loaded( 'sodium' ) ) {
 			return new WP_Error(
 				'snapshot_encryption_unavailable',
-				__( 'The sodium extension is required for filesystem snapshots', 'flywp-migrator' ),
+				__( 'The sodium extension is required for filesystem snapshots', 'migwp-migrator' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -374,16 +374,16 @@ class FilesystemSnapshotService {
 			}
 		}
 
-		$db_rel      = '__flywp/database/latest.dbsnap';
+		$db_rel      = '__migwp/database/latest.dbsnap';
 		$db_abs      = $db_state['artifact_file'];
 		$entries[]   = [
 			'type'          => 'dir',
-			'relative_path' => '__flywp',
+			'relative_path' => '__migwp',
 			'absolute_path' => null,
 		];
 		$entries[]   = [
 			'type'          => 'dir',
-			'relative_path' => '__flywp/database',
+			'relative_path' => '__migwp/database',
 			'absolute_path' => null,
 		];
 		$entries[]   = $this->file_entry( $db_rel, $db_abs, false );
@@ -417,7 +417,7 @@ class FilesystemSnapshotService {
 	 */
 	private function write_payload_stream( $payload_file, array $manifest, array $db_state, $snapshot_id, array &$state, $worker_token ) {
 		$salt        = random_bytes( 32 );
-		$key         = $this->key_deriver->derive_secretstream_key( flywp_migrator()->get_migration_key(), $snapshot_id, $salt, 'filesystem-snapshot' );
+		$key         = $this->key_deriver->derive_secretstream_key( migwp_migrator()->get_migration_key(), $snapshot_id, $salt, 'filesystem-snapshot' );
 		$init        = sodium_crypto_secretstream_xchacha20poly1305_init_push( $key );
 		$crypto      = $init[0];
 		$stream_head = $init[1];
@@ -426,7 +426,7 @@ class FilesystemSnapshotService {
 		if ( ! $handle ) {
 			return new WP_Error(
 				'filesystem_snapshot_payload_open_failed',
-				__( 'Could not create the filesystem payload stream', 'flywp-migrator' ),
+				__( 'Could not create the filesystem payload stream', 'migwp-migrator' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -482,7 +482,7 @@ class FilesystemSnapshotService {
 						'filesystem_snapshot_entry_open_failed',
 						sprintf(
 							/* translators: %s: relative file path */
-							__( 'Could not read snapshot entry %s', 'flywp-migrator' ),
+							__( 'Could not read snapshot entry %s', 'migwp-migrator' ),
 							$entry['relative_path']
 						),
 						[ 'status' => 500 ]
@@ -502,7 +502,7 @@ class FilesystemSnapshotService {
 							'filesystem_snapshot_entry_read_failed',
 							sprintf(
 								/* translators: %s: relative file path */
-								__( 'Could not stream snapshot entry %s', 'flywp-migrator' ),
+								__( 'Could not stream snapshot entry %s', 'migwp-migrator' ),
 								$entry['relative_path']
 							),
 							[ 'status' => 500 ]
@@ -570,7 +570,7 @@ class FilesystemSnapshotService {
 
 			return new WP_Error(
 				'filesystem_snapshot_archive_open_failed',
-				__( 'Could not assemble the filesystem snapshot archive', 'flywp-migrator' ),
+				__( 'Could not assemble the filesystem snapshot archive', 'migwp-migrator' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -608,7 +608,7 @@ class FilesystemSnapshotService {
 
 				return new WP_Error(
 					'filesystem_snapshot_archive_copy_failed',
-					__( 'Could not finalize the encrypted filesystem snapshot payload', 'flywp-migrator' ),
+					__( 'Could not finalize the encrypted filesystem snapshot payload', 'migwp-migrator' ),
 					[ 'status' => 500 ]
 				);
 			}
@@ -726,7 +726,7 @@ class FilesystemSnapshotService {
 		if ( 0 !== strpos( $include_root, 'wp-content' ) ) {
 			return new WP_Error(
 				'invalid_snapshot_root',
-				__( 'Snapshot include roots must stay under wp-content', 'flywp-migrator' ),
+				__( 'Snapshot include roots must stay under wp-content', 'migwp-migrator' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -788,7 +788,7 @@ class FilesystemSnapshotService {
 
 			return new WP_Error(
 				'filesystem_snapshot_gzip_open_failed',
-				__( 'Could not open a file for entry compression', 'flywp-migrator' ),
+				__( 'Could not open a file for entry compression', 'migwp-migrator' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -802,7 +802,7 @@ class FilesystemSnapshotService {
 
 				return new WP_Error(
 					'filesystem_snapshot_gzip_read_failed',
-					__( 'Could not compress a filesystem snapshot entry', 'flywp-migrator' ),
+					__( 'Could not compress a filesystem snapshot entry', 'migwp-migrator' ),
 					[ 'status' => 500 ]
 				);
 			}
@@ -881,7 +881,7 @@ class FilesystemSnapshotService {
 		if ( empty( $state['worker_token'] ) || $state['worker_token'] !== $worker_token ) {
 			return new WP_Error(
 				'snapshot_worker_superseded',
-				__( 'Filesystem snapshot worker has been superseded by a newer job', 'flywp-migrator' ),
+				__( 'Filesystem snapshot worker has been superseded by a newer job', 'migwp-migrator' ),
 				[ 'status' => 409 ]
 			);
 		}

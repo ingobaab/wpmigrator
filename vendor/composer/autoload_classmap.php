@@ -7,16 +7,4 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
-    'FlyWP\\Migrator\\Admin' => $baseDir . '/includes/Admin.php',
-    'FlyWP\\Migrator\\Api' => $baseDir . '/includes/Api.php',
-    'FlyWP\\Migrator\\Api\\Database' => $baseDir . '/includes/Api/Database.php',
-    'FlyWP\\Migrator\\Api\\Files' => $baseDir . '/includes/Api/Files.php',
-    'FlyWP\\Migrator\\Plugin' => $baseDir . '/includes/Plugin.php',
-    'FlyWP\\Migrator\\Services\\Database\\Backup' => $baseDir . '/includes/Services/Database/Backup.php',
-    'FlyWP\\Migrator\\Services\\Database\\JobData' => $baseDir . '/includes/Services/Database/JobData.php',
-    'FlyWP\\Migrator\\Services\\Database\\JobScheduler' => $baseDir . '/includes/Services/Database/JobScheduler.php',
-    'FlyWP\\Migrator\\Services\\Database\\MysqldumpFinder' => $baseDir . '/includes/Services/Database/MysqldumpFinder.php',
-    'FlyWP\\Migrator\\Services\\Database\\Scheduler' => $baseDir . '/includes/Services/Database/Scheduler.php',
-    'FlyWP\\Migrator\\Services\\Database\\Semaphore' => $baseDir . '/includes/Services/Database/Semaphore.php',
-    'FlyWP\\Migrator\\Services\\Database\\Utilities' => $baseDir . '/includes/Services/Database/Utilities.php',
 );

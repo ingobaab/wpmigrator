@@ -1,8 +1,8 @@
 <?php
 
-namespace FlyWP\Migrator;
+namespace MigWP\Migrator;
 
-use FlyWP\Migrator\Services\Database\Scheduler;
+use MigWP\Migrator\Services\Database\Scheduler;
 
 /**
  * Main plugin class
@@ -50,10 +50,10 @@ class Plugin {
      * @return void
      */
     private function define_constants() {
-        define( 'FLYWP_MIGRATOR_VERSION', self::VERSION );
-        define( 'FLYWP_MIGRATOR_PATH', dirname( FLYWP_MIGRATOR_FILE ) );
-        define( 'FLYWP_MIGRATOR_INCLUDES', FLYWP_MIGRATOR_PATH . '/includes' );
-        define( 'FLYWP_MIGRATOR_URL', plugins_url( '', FLYWP_MIGRATOR_FILE ) );
+        define( 'MIGWP_MIGRATOR_VERSION', self::VERSION );
+        define( 'MIGWP_MIGRATOR_PATH', dirname( MIGWP_MIGRATOR_FILE ) );
+        define( 'MIGWP_MIGRATOR_INCLUDES', MIGWP_MIGRATOR_PATH . '/includes' );
+        define( 'MIGWP_MIGRATOR_URL', plugins_url( '', MIGWP_MIGRATOR_FILE ) );
     }
 
     /**
@@ -62,7 +62,7 @@ class Plugin {
      * @return void
      */
     private function init_hooks() {
-        register_activation_hook( FLYWP_MIGRATOR_FILE, [$this, 'activate'] );
+        register_activation_hook( MIGWP_MIGRATOR_FILE, [$this, 'activate'] );
 
         // Initialize the plugin
         add_action( 'plugins_loaded', [$this, 'init_plugin'] );
@@ -71,7 +71,7 @@ class Plugin {
         add_action( 'rest_api_init', [$this, 'register_rest_routes'] );
 
         // Add settings link to plugin listing
-        add_filter( 'plugin_action_links_' . plugin_basename( FLYWP_MIGRATOR_FILE ), [$this, 'add_plugin_action_links'] );
+        add_filter( 'plugin_action_links_' . plugin_basename( MIGWP_MIGRATOR_FILE ), [$this, 'add_plugin_action_links'] );
     }
 
     /**
@@ -113,7 +113,7 @@ class Plugin {
      * @return string
      */
     public function get_migration_key() {
-        return get_option( 'flywp_migration_key', '' );
+        return get_option( 'migwp_migration_key', '' );
     }
 
     /**
@@ -124,7 +124,7 @@ class Plugin {
      * @return void
      */
     public function set_migration_key( $key ) {
-        update_option( 'flywp_migration_key', $key );
+        update_option( 'migwp_migration_key', $key );
     }
 
     /**
@@ -135,7 +135,7 @@ class Plugin {
      * @return array
      */
     public function add_plugin_action_links( $links ) {
-        $settings_link = '<a href="' . admin_url( 'admin.php?page=flywp-migrator' ) . '">' . __( 'Settings', 'flywp-migrator' ) . '</a>';
+        $settings_link = '<a href="' . admin_url( 'admin.php?page=migwp-migrator' ) . '">' . __( 'Settings', 'migwp-migrator' ) . '</a>';
         array_unshift( $links, $settings_link );
 
         return $links;

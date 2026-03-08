@@ -29,7 +29,7 @@ if ( ! is_array( $config ) || empty( $config['migration_key'] ) ) {
 
 $output_dir = isset( $config['output_dir'] ) && '' !== trim( (string) $config['output_dir'] )
 	? (string) $config['output_dir']
-	: sys_get_temp_dir() . '/flywp-puller';
+	: sys_get_temp_dir() . '/migwp-puller';
 
 if ( null === $artifact || '' === trim( (string) $artifact ) ) {
 	$candidates = glob( rtrim( $output_dir, '/\\' ) . DIRECTORY_SEPARATOR . '*.fwsnap' );
@@ -59,7 +59,7 @@ function derive_secretstream_key( $migration_key, $snapshot_id, $salt, $purpose 
 		'sha256',
 		(string) $migration_key,
 		SODIUM_CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_KEYBYTES,
-		'flywp-migrator:' . $purpose . ':' . $snapshot_id,
+		'migwp-migrator:' . $purpose . ':' . $snapshot_id,
 		$salt
 	);
 }

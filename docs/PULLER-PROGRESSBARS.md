@@ -22,7 +22,7 @@ The bars are shown in order, not blended into one combined percentage.
 
 Source:
 
-- `GET /flywp-migrator/v1/snapshot/database`
+- `GET /migwp-migrator/v1/snapshot/database`
 
 Primary progress value:
 
@@ -51,7 +51,7 @@ Behavior:
 
 Source:
 
-- `GET /flywp-migrator/v1/snapshot/filesystem`
+- `GET /migwp-migrator/v1/snapshot/filesystem`
 
 Primary progress value:
 
@@ -81,8 +81,8 @@ Behavior:
 
 Source:
 
-- `GET /flywp-migrator/v1/files/meta`
-- `GET /flywp-migrator/v1/files/stream`
+- `GET /migwp-migrator/v1/files/meta`
+- `GET /migwp-migrator/v1/files/stream`
 
 Primary progress value:
 

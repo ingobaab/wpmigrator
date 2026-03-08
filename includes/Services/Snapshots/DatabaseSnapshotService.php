@@ -1,8 +1,8 @@
 <?php
 
-namespace FlyWP\Migrator\Services\Snapshots;
+namespace MigWP\Migrator\Services\Snapshots;
 
-use FlyWP\Migrator\Services\Crypto\StreamEncryptor;
+use MigWP\Migrator\Services\Crypto\StreamEncryptor;
 use mysqli;
 use WP_Error;
 
@@ -91,7 +91,7 @@ class DatabaseSnapshotService {
 		if ( ! extension_loaded( 'mysqli' ) ) {
 			return new WP_Error(
 				'snapshot_mysqli_unavailable',
-				__( 'The mysqli extension is required for database snapshots', 'flywp-migrator' ),
+				__( 'The mysqli extension is required for database snapshots', 'migwp-migrator' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -99,7 +99,7 @@ class DatabaseSnapshotService {
 		if ( ! extension_loaded( 'zlib' ) ) {
 			return new WP_Error(
 				'snapshot_zlib_unavailable',
-				__( 'The zlib extension is required for database snapshots', 'flywp-migrator' ),
+				__( 'The zlib extension is required for database snapshots', 'migwp-migrator' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -109,7 +109,7 @@ class DatabaseSnapshotService {
 		if ( empty( $state ) || empty( $state['worker_token'] ) || $state['worker_token'] !== $worker_token ) {
 			return new WP_Error(
 				'snapshot_worker_token_invalid',
-				__( 'Database snapshot worker token is invalid or superseded', 'flywp-migrator' ),
+				__( 'Database snapshot worker token is invalid or superseded', 'migwp-migrator' ),
 				[ 'status' => 409 ]
 			);
 		}
@@ -154,7 +154,7 @@ class DatabaseSnapshotService {
 		if ( ! $sql_handle ) {
 			$error = new WP_Error(
 				'snapshot_sql_open_failed',
-				__( 'Could not create temporary SQL dump', 'flywp-migrator' ),
+				__( 'Could not create temporary SQL dump', 'migwp-migrator' ),
 				[ 'status' => 500 ]
 			);
 			$this->mark_failed( $state, $error );
@@ -218,7 +218,7 @@ class DatabaseSnapshotService {
 		$encryption_result = $this->encryptor->encrypt_file(
 			$gzip_path,
 			$encrypted_path,
-			flywp_migrator()->get_migration_key(),
+			migwp_migrator()->get_migration_key(),
 			$state['snapshot_id'],
 			'database-snapshot',
 			[
@@ -299,7 +299,7 @@ class DatabaseSnapshotService {
 		if ( empty( $state['worker_token'] ) || $state['worker_token'] !== $worker_token ) {
 			return new WP_Error(
 				'snapshot_worker_superseded',
-				__( 'Database snapshot worker has been superseded by a newer job', 'flywp-migrator' ),
+				__( 'Database snapshot worker has been superseded by a newer job', 'migwp-migrator' ),
 				[ 'status' => 409 ]
 			);
 		}
@@ -337,7 +337,7 @@ class DatabaseSnapshotService {
 		if ( ! $db ) {
 			return new WP_Error(
 				'snapshot_db_init_failed',
-				__( 'Could not initialize mysqli', 'flywp-migrator' ),
+				__( 'Could not initialize mysqli', 'migwp-migrator' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -431,7 +431,7 @@ class DatabaseSnapshotService {
 	 * @return void
 	 */
 	private function write_sql_header( $handle ) {
-		fwrite( $handle, "-- FlyWP Migrator database snapshot\n" );
+		fwrite( $handle, "-- MigWP Migrator database snapshot\n" );
 		fwrite( $handle, '-- Created at: ' . gmdate( 'c' ) . "\n" );
 		fwrite( $handle, "SET SESSION sql_mode = 'NO_AUTO_VALUE_ON_ZERO';\n" );
 		fwrite( $handle, "SET time_zone = '+00:00';\n" );
@@ -470,7 +470,7 @@ class DatabaseSnapshotService {
 				'snapshot_table_read_failed',
 				sprintf(
 					/* translators: %s: table name */
-					__( 'Could not read table %s', 'flywp-migrator' ),
+					__( 'Could not read table %s', 'migwp-migrator' ),
 					$table_label
 				),
 				[ 'status' => 500 ]
@@ -521,7 +521,7 @@ class DatabaseSnapshotService {
 				'snapshot_table_schema_failed',
 				sprintf(
 					/* translators: %s: table name */
-					__( 'Could not read schema for table %s', 'flywp-migrator' ),
+					__( 'Could not read schema for table %s', 'migwp-migrator' ),
 					$table
 				),
 				[ 'status' => 500 ]
@@ -543,7 +543,7 @@ class DatabaseSnapshotService {
 			'snapshot_table_schema_missing',
 			sprintf(
 				/* translators: %s: table name */
-				__( 'Schema for table %s was empty', 'flywp-migrator' ),
+				__( 'Schema for table %s was empty', 'migwp-migrator' ),
 				$table
 			),
 			[ 'status' => 500 ]
@@ -584,7 +584,7 @@ class DatabaseSnapshotService {
 
 			return new WP_Error(
 				'snapshot_gzip_open_failed',
-				__( 'Could not open files for gzip compression', 'flywp-migrator' ),
+				__( 'Could not open files for gzip compression', 'migwp-migrator' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -598,7 +598,7 @@ class DatabaseSnapshotService {
 
 				return new WP_Error(
 					'snapshot_gzip_read_failed',
-					__( 'Could not read SQL dump during compression', 'flywp-migrator' ),
+					__( 'Could not read SQL dump during compression', 'migwp-migrator' ),
 					[ 'status' => 500 ]
 				);
 			}

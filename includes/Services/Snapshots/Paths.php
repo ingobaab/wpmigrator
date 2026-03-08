@@ -1,6 +1,6 @@
 <?php
 
-namespace FlyWP\Migrator\Services\Snapshots;
+namespace MigWP\Migrator\Services\Snapshots;
 
 use WP_Error;
 
@@ -16,7 +16,7 @@ class Paths {
 		if ( empty( $upload_dir['basedir'] ) ) {
 			return new WP_Error(
 				'snapshot_uploads_unavailable',
-				__( 'Uploads directory is not available', 'flywp-migrator' ),
+				__( 'Uploads directory is not available', 'migwp-migrator' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -26,7 +26,7 @@ class Paths {
 		if ( ! file_exists( $uploads_base_dir ) && ! wp_mkdir_p( $uploads_base_dir ) ) {
 			return new WP_Error(
 				'snapshot_uploads_directory_unwritable',
-				__( 'Could not create the WordPress uploads directory', 'flywp-migrator' ),
+				__( 'Could not create the WordPress uploads directory', 'migwp-migrator' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -34,12 +34,12 @@ class Paths {
 		if ( ! is_dir( $uploads_base_dir ) || ! is_writable( $uploads_base_dir ) ) {
 			return new WP_Error(
 				'snapshot_uploads_directory_unwritable',
-				__( 'The WordPress uploads directory is not writable', 'flywp-migrator' ),
+				__( 'The WordPress uploads directory is not writable', 'migwp-migrator' ),
 				[ 'status' => 500 ]
 			);
 		}
 
-		return trailingslashit( $uploads_base_dir ) . 'flywp-migrator';
+		return trailingslashit( $uploads_base_dir ) . 'migwp-migrator';
 	}
 
 	/**
@@ -69,7 +69,7 @@ class Paths {
 
 		return new WP_Error(
 			'snapshot_directory_unwritable',
-			__( 'Could not create snapshot runtime directory', 'flywp-migrator' ),
+			__( 'Could not create snapshot runtime directory', 'migwp-migrator' ),
 			[ 'status' => 500 ]
 		);
 	}
@@ -89,7 +89,7 @@ class Paths {
 		if ( '' === $base_dir || 0 !== strpos( $absolute, trailingslashit( $base_dir ) ) ) {
 			return new WP_Error(
 				'invalid_transfer_path',
-				__( 'Artifact path is outside uploads', 'flywp-migrator' ),
+				__( 'Artifact path is outside uploads', 'migwp-migrator' ),
 				[ 'status' => 500 ]
 			);
 		}

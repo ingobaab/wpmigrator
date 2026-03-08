@@ -1,11 +1,11 @@
 <?php
 
-namespace FlyWP\Migrator\Services\Snapshots;
+namespace MigWP\Migrator\Services\Snapshots;
 
 use WP_Error;
 
 class ConfigStore {
-	const OPTION_NAME = 'flywp_migrator_snapshot_config';
+	const OPTION_NAME = 'migwp_migrator_snapshot_config';
 
 	/**
 	 * Return the stored config merged with defaults.
@@ -53,7 +53,7 @@ class ConfigStore {
 				'wp-content/themes',
 			],
 			'exclude_paths'      => [
-				'wp-content/uploads/flywp-migrator',
+				'wp-content/uploads/migwp-migrator',
 				'wp-content/ai1wm-backups',
 				'wp-content/updraft',
 				'wp-content/backupbuddy_backups',
@@ -90,7 +90,7 @@ class ConfigStore {
 		if ( empty( $config['include_roots'] ) ) {
 			return new WP_Error(
 				'invalid_snapshot_config',
-				__( 'At least one include root is required', 'flywp-migrator' ),
+				__( 'At least one include root is required', 'migwp-migrator' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -101,7 +101,7 @@ class ConfigStore {
 					'invalid_snapshot_config',
 					sprintf(
 						/* translators: %s: relative include path */
-						__( 'Include root "%s" must stay under wp-content', 'flywp-migrator' ),
+						__( 'Include root "%s" must stay under wp-content', 'migwp-migrator' ),
 						$path
 					),
 					[ 'status' => 400 ]

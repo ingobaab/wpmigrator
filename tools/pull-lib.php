@@ -1,10 +1,10 @@
 <?php
 
-function flywp_puller_default_config_path() {
+function migwp_puller_default_config_path() {
 	return __DIR__ . '/pull-config.json';
 }
 
-function flywp_puller_load_config( $config_path, $cli_poll_interval_seconds = null ) {
+function migwp_puller_load_config( $config_path, $cli_poll_interval_seconds = null ) {
 	if ( ! extension_loaded( 'curl' ) ) {
 		throw new RuntimeException( 'The cURL extension is required.' );
 	}
@@ -37,7 +37,7 @@ function flywp_puller_load_config( $config_path, $cli_poll_interval_seconds = nu
 		: $base_url . '/wp-json';
 	$output_dir            = isset( $config['output_dir'] ) && '' !== trim( (string) $config['output_dir'] )
 		? (string) $config['output_dir']
-		: sys_get_temp_dir() . '/flywp-puller';
+		: sys_get_temp_dir() . '/migwp-puller';
 	$poll_interval_seconds = null !== $cli_poll_interval_seconds
 		? max( 0.2, (float) $cli_poll_interval_seconds )
 		: ( isset( $config['poll_interval_seconds'] ) ? max( 0.2, (float) $config['poll_interval_seconds'] ) : 1.0 );
@@ -58,7 +58,7 @@ function flywp_puller_load_config( $config_path, $cli_poll_interval_seconds = nu
 	];
 }
 
-function flywp_puller_build_rest_url( $rest_root, $route, array $query = [] ) {
+function migwp_puller_build_rest_url( $rest_root, $route, array $query = [] ) {
 	$url = $rest_root;
 
 	if ( false !== strpos( $rest_root, '?' ) ) {
@@ -74,12 +74,12 @@ function flywp_puller_build_rest_url( $rest_root, $route, array $query = [] ) {
 	return $url;
 }
 
-function flywp_puller_request_json( $method, $rest_root, $route, $migration_key, array $query = [], $body = null ) {
-	$url = flywp_puller_build_rest_url( $rest_root, $route, $query );
+function migwp_puller_request_json( $method, $rest_root, $route, $migration_key, array $query = [], $body = null ) {
+	$url = migwp_puller_build_rest_url( $rest_root, $route, $query );
 	$ch  = curl_init( $url );
 
 	$headers = [
-		'X-FlyWP-Key: ' . $migration_key,
+		'X-MigWP-Key: ' . $migration_key,
 		'Accept: application/json',
 	];
 
@@ -127,7 +127,7 @@ function flywp_puller_request_json( $method, $rest_root, $route, $migration_key,
 	];
 }
 
-function flywp_puller_format_bytes( $bytes ) {
+function migwp_puller_format_bytes( $bytes ) {
 	$bytes = (float) $bytes;
 	$units = [ 'B', 'KB', 'MB', 'GB', 'TB' ];
 	$idx   = 0;
@@ -140,14 +140,14 @@ function flywp_puller_format_bytes( $bytes ) {
 	return sprintf( $bytes >= 100 || 0 === $idx ? '%.0f %s' : '%.1f %s', $bytes, $units[ $idx ] );
 }
 
-function flywp_puller_ascii_progress_bar( $percent, $width = 30 ) {
+function migwp_puller_ascii_progress_bar( $percent, $width = 30 ) {
 	$percent = max( 0, min( 100, (float) $percent ) );
 	$filled  = (int) round( ( $percent / 100 ) * $width );
 
 	return '[' . str_repeat( '#', $filled ) . str_repeat( '-', $width - $filled ) . ']';
 }
 
-function flywp_puller_print_snapshot_progress( $label, array $status ) {
+function migwp_puller_print_snapshot_progress( $label, array $status ) {
 	$phase     = isset( $status['current_phase'] ) ? (string) $status['current_phase'] : '-';
 	$item      = isset( $status['current_item'] ) && null !== $status['current_item'] ? (string) $status['current_item'] : '-';
 	$progress  = isset( $status['progress_percent'] ) ? (float) $status['progress_percent'] : 0;
@@ -156,33 +156,33 @@ function flywp_puller_print_snapshot_progress( $label, array $status ) {
 
 	echo sprintf(
 		"%s %-20s %6.1f%%  %s / %s  phase=%s  item=%s\n",
-		flywp_puller_ascii_progress_bar( $progress ),
+		migwp_puller_ascii_progress_bar( $progress ),
 		$label,
 		$progress,
-		flywp_puller_format_bytes( $processed ),
-		flywp_puller_format_bytes( $total ),
+		migwp_puller_format_bytes( $processed ),
+		migwp_puller_format_bytes( $total ),
 		$phase,
 		$item
 	);
 }
 
-function flywp_puller_print_transfer_progress( $label, $downloaded_bytes, $total_bytes, $chunk_index, $total_chunks, $final_path ) {
+function migwp_puller_print_transfer_progress( $label, $downloaded_bytes, $total_bytes, $chunk_index, $total_chunks, $final_path ) {
 	$progress = $total_bytes > 0 ? ( $downloaded_bytes / $total_bytes ) * 100 : 0;
 
 	echo sprintf(
 		"%s %-20s %6.1f%%  %s / %s  chunks=%d/%d  file=%s\n",
-		flywp_puller_ascii_progress_bar( $progress ),
+		migwp_puller_ascii_progress_bar( $progress ),
 		$label,
 		$progress,
-		flywp_puller_format_bytes( $downloaded_bytes ),
-		flywp_puller_format_bytes( $total_bytes ),
+		migwp_puller_format_bytes( $downloaded_bytes ),
+		migwp_puller_format_bytes( $total_bytes ),
 		$chunk_index,
 		$total_chunks,
 		basename( $final_path )
 	);
 }
 
-function flywp_puller_sleep_interval( $seconds ) {
+function migwp_puller_sleep_interval( $seconds ) {
 	if ( $seconds <= 0 ) {
 		return;
 	}
@@ -190,7 +190,7 @@ function flywp_puller_sleep_interval( $seconds ) {
 	usleep( (int) round( $seconds * 1000000 ) );
 }
 
-function flywp_puller_calculate_snapshot_percent( array $status ) {
+function migwp_puller_calculate_snapshot_percent( array $status ) {
 	if ( isset( $status['progress_percent'] ) && null !== $status['progress_percent'] ) {
 		return max( 0, min( 100, (float) $status['progress_percent'] ) );
 	}
@@ -205,7 +205,7 @@ function flywp_puller_calculate_snapshot_percent( array $status ) {
 	return 0.0;
 }
 
-function flywp_puller_snapshot_digest( array $status ) {
+function migwp_puller_snapshot_digest( array $status ) {
 	return md5(
 		json_encode(
 			[
@@ -220,8 +220,8 @@ function flywp_puller_snapshot_digest( array $status ) {
 	);
 }
 
-function flywp_puller_snapshot_phase_payload( $key, $label, array $status ) {
-	$status['progress_percent'] = flywp_puller_calculate_snapshot_percent( $status );
+function migwp_puller_snapshot_phase_payload( $key, $label, array $status ) {
+	$status['progress_percent'] = migwp_puller_calculate_snapshot_percent( $status );
 
 	return [
 		'key'    => $key,
@@ -230,14 +230,14 @@ function flywp_puller_snapshot_phase_payload( $key, $label, array $status ) {
 	];
 }
 
-function flywp_puller_notify( $observer, $event, array $payload ) {
+function migwp_puller_notify( $observer, $event, array $payload ) {
 	if ( null !== $observer ) {
 		call_user_func( $observer, $event, $payload );
 	}
 }
 
-function flywp_puller_start_snapshot( $key, $label, $rest_root, $route, $migration_key, $observer = null ) {
-	$response = flywp_puller_request_json( 'POST', $rest_root, $route, $migration_key );
+function migwp_puller_start_snapshot( $key, $label, $rest_root, $route, $migration_key, $observer = null ) {
+	$response = migwp_puller_request_json( 'POST', $rest_root, $route, $migration_key );
 
 	if ( ! $response['ok'] ) {
 		$message = "Failed to start {$label}. HTTP {$response['status']}";
@@ -249,27 +249,27 @@ function flywp_puller_start_snapshot( $key, $label, $rest_root, $route, $migrati
 	}
 
 	if ( is_array( $response['body'] ) ) {
-		flywp_puller_notify(
+		migwp_puller_notify(
 			$observer,
 			'snapshot.progress',
-			flywp_puller_snapshot_phase_payload( $key, $label, $response['body'] )
+			migwp_puller_snapshot_phase_payload( $key, $label, $response['body'] )
 		);
 	}
 
 	return is_array( $response['body'] ) ? $response['body'] : null;
 }
 
-function flywp_puller_wait_for_snapshot( $key, $label, $rest_root, $route, $migration_key, $poll_interval_seconds, $poll_timeout_seconds, $observer = null, array $initial_status = null ) {
+function migwp_puller_wait_for_snapshot( $key, $label, $rest_root, $route, $migration_key, $poll_interval_seconds, $poll_timeout_seconds, $observer = null, array $initial_status = null ) {
 	$deadline    = time() + $poll_timeout_seconds;
 	$last_digest = null;
 
 	if ( null !== $initial_status ) {
-		$initial_status['progress_percent'] = flywp_puller_calculate_snapshot_percent( $initial_status );
-		$last_digest                        = flywp_puller_snapshot_digest( $initial_status );
+		$initial_status['progress_percent'] = migwp_puller_calculate_snapshot_percent( $initial_status );
+		$last_digest                        = migwp_puller_snapshot_digest( $initial_status );
 	}
 
 	while ( true ) {
-		$response = flywp_puller_request_json( 'GET', $rest_root, $route, $migration_key );
+		$response = migwp_puller_request_json( 'GET', $rest_root, $route, $migration_key );
 
 		if ( ! $response['ok'] || ! is_array( $response['body'] ) ) {
 			$message = "Failed to poll {$route}. HTTP {$response['status']}";
@@ -296,10 +296,10 @@ function flywp_puller_wait_for_snapshot( $key, $label, $rest_root, $route, $migr
 		);
 
 		if ( $digest !== $last_digest ) {
-			flywp_puller_notify(
+			migwp_puller_notify(
 				$observer,
 				'snapshot.progress',
-				flywp_puller_snapshot_phase_payload( $key, $label, $status )
+				migwp_puller_snapshot_phase_payload( $key, $label, $status )
 			);
 			$last_digest = $digest;
 		}
@@ -316,11 +316,11 @@ function flywp_puller_wait_for_snapshot( $key, $label, $rest_root, $route, $migr
 			throw new RuntimeException( "{$label} timed out after {$poll_timeout_seconds} seconds." );
 		}
 
-		flywp_puller_sleep_interval( $poll_interval_seconds );
+		migwp_puller_sleep_interval( $poll_interval_seconds );
 	}
 }
 
-function flywp_puller_transfer_payload( array $payload ) {
+function migwp_puller_transfer_payload( array $payload ) {
 	$progress_percent = 0;
 	if ( ! empty( $payload['size'] ) ) {
 		$progress_percent = max( 0, min( 100, ( (float) ( $payload['downloaded_bytes'] ?? 0 ) / (float) $payload['size'] ) * 100 ) );
@@ -331,11 +331,11 @@ function flywp_puller_transfer_payload( array $payload ) {
 	return $payload;
 }
 
-function flywp_puller_download_artifact( $rest_root, $migration_key, $artifact_path, $output_dir, $observer = null ) {
-	$meta = flywp_puller_request_json(
+function migwp_puller_download_artifact( $rest_root, $migration_key, $artifact_path, $output_dir, $observer = null ) {
+	$meta = migwp_puller_request_json(
 		'GET',
 		$rest_root,
-		'/flywp-migrator/v1/files/meta',
+		'/migwp-migrator/v1/files/meta',
 		$migration_key,
 		[
 			'path' => $artifact_path,
@@ -393,10 +393,10 @@ function flywp_puller_download_artifact( $rest_root, $migration_key, $artifact_p
 		$downloaded_map[ (int) $downloaded_chunk ] = true;
 	}
 
-	flywp_puller_notify(
+	migwp_puller_notify(
 		$observer,
 		'transfer.started',
-		flywp_puller_transfer_payload(
+		migwp_puller_transfer_payload(
 			[
 				'label'            => 'Transfer',
 				'status'           => 'running',
@@ -424,9 +424,9 @@ function flywp_puller_download_artifact( $rest_root, $migration_key, $artifact_p
 
 	try {
 		for ( $chunk_index = $next_chunk; $chunk_index < $total_chunks; $chunk_index++ ) {
-			$url              = flywp_puller_build_rest_url(
+			$url              = migwp_puller_build_rest_url(
 				$rest_root,
-				'/flywp-migrator/v1/files/stream',
+				'/migwp-migrator/v1/files/stream',
 				[
 					'path'  => $artifact_path,
 					'chunk' => $chunk_index,
@@ -441,7 +441,7 @@ function flywp_puller_download_artifact( $rest_root, $migration_key, $artifact_p
 					CURLOPT_RETURNTRANSFER => true,
 					CURLOPT_FOLLOWLOCATION => true,
 					CURLOPT_HTTPHEADER     => [
-						'X-FlyWP-Key: ' . $migration_key,
+						'X-MigWP-Key: ' . $migration_key,
 					],
 					CURLOPT_TIMEOUT        => 0,
 					CURLOPT_CONNECTTIMEOUT => 15,
@@ -474,10 +474,10 @@ function flywp_puller_download_artifact( $rest_root, $migration_key, $artifact_p
 				throw new RuntimeException( "Unexpected /files/stream status {$status} for chunk {$chunk_index}\n{$payload}" );
 			}
 
-			$expected_checksum = $response_headers['x-flywp-chunk-checksum'] ?? '';
-			$response_etag     = $response_headers['x-flywp-file-etag'] ?? '';
-			$response_index    = isset( $response_headers['x-flywp-chunk-index'] ) ? (int) $response_headers['x-flywp-chunk-index'] : -1;
-			$response_total    = isset( $response_headers['x-flywp-total-chunks'] ) ? (int) $response_headers['x-flywp-total-chunks'] : -1;
+			$expected_checksum = $response_headers['x-migwp-chunk-checksum'] ?? '';
+			$response_etag     = $response_headers['x-migwp-file-etag'] ?? '';
+			$response_index    = isset( $response_headers['x-migwp-chunk-index'] ) ? (int) $response_headers['x-migwp-chunk-index'] : -1;
+			$response_total    = isset( $response_headers['x-migwp-total-chunks'] ) ? (int) $response_headers['x-migwp-total-chunks'] : -1;
 			$actual_checksum   = hash( 'sha256', $payload );
 			$offset            = $chunk_index * $chunk_size;
 
@@ -509,10 +509,10 @@ function flywp_puller_download_artifact( $rest_root, $migration_key, $artifact_p
 			$progress['downloaded_size'] = filesize( $partial_path );
 			file_put_contents( $progress_path, json_encode( $progress, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES ) );
 
-			flywp_puller_notify(
+			migwp_puller_notify(
 				$observer,
 				'transfer.progress',
-				flywp_puller_transfer_payload(
+				migwp_puller_transfer_payload(
 					[
 						'label'            => 'Transfer',
 						'status'           => 'running',
@@ -553,10 +553,10 @@ function flywp_puller_download_artifact( $rest_root, $migration_key, $artifact_p
 		'etag'       => $etag,
 	];
 
-	flywp_puller_notify(
+	migwp_puller_notify(
 		$observer,
 		'transfer.complete',
-		flywp_puller_transfer_payload(
+		migwp_puller_transfer_payload(
 			[
 				'label'            => 'Transfer',
 				'status'           => 'complete',
@@ -576,8 +576,8 @@ function flywp_puller_download_artifact( $rest_root, $migration_key, $artifact_p
 	return $result;
 }
 
-function flywp_puller_run( array $config, $observer = null ) {
-	flywp_puller_notify(
+function migwp_puller_run( array $config, $observer = null ) {
+	migwp_puller_notify(
 		$observer,
 		'job.started',
 		[
@@ -588,20 +588,20 @@ function flywp_puller_run( array $config, $observer = null ) {
 		]
 	);
 
-	$database_initial = flywp_puller_start_snapshot(
+	$database_initial = migwp_puller_start_snapshot(
 		'database',
 		'Database Snapshot',
 		$config['rest_root'],
-		'/flywp-migrator/v1/snapshot/database',
+		'/migwp-migrator/v1/snapshot/database',
 		$config['migration_key'],
 		$observer
 	);
 
-	$database_status = flywp_puller_wait_for_snapshot(
+	$database_status = migwp_puller_wait_for_snapshot(
 		'database',
 		'Database Snapshot',
 		$config['rest_root'],
-		'/flywp-migrator/v1/snapshot/database',
+		'/migwp-migrator/v1/snapshot/database',
 		$config['migration_key'],
 		$config['poll_interval_seconds'],
 		$config['poll_timeout_seconds'],
@@ -609,26 +609,26 @@ function flywp_puller_run( array $config, $observer = null ) {
 		$database_initial
 	);
 
-	flywp_puller_notify(
+	migwp_puller_notify(
 		$observer,
 		'snapshot.complete',
-		flywp_puller_snapshot_phase_payload( 'database', 'Database Snapshot', $database_status )
+		migwp_puller_snapshot_phase_payload( 'database', 'Database Snapshot', $database_status )
 	);
 
-	$filesystem_initial = flywp_puller_start_snapshot(
+	$filesystem_initial = migwp_puller_start_snapshot(
 		'filesystem',
 		'Filesystem Snapshot',
 		$config['rest_root'],
-		'/flywp-migrator/v1/snapshot/filesystem',
+		'/migwp-migrator/v1/snapshot/filesystem',
 		$config['migration_key'],
 		$observer
 	);
 
-	$filesystem_status = flywp_puller_wait_for_snapshot(
+	$filesystem_status = migwp_puller_wait_for_snapshot(
 		'filesystem',
 		'Filesystem Snapshot',
 		$config['rest_root'],
-		'/flywp-migrator/v1/snapshot/filesystem',
+		'/migwp-migrator/v1/snapshot/filesystem',
 		$config['migration_key'],
 		$config['poll_interval_seconds'],
 		$config['poll_timeout_seconds'],
@@ -636,10 +636,10 @@ function flywp_puller_run( array $config, $observer = null ) {
 		$filesystem_initial
 	);
 
-	flywp_puller_notify(
+	migwp_puller_notify(
 		$observer,
 		'snapshot.complete',
-		flywp_puller_snapshot_phase_payload( 'filesystem', 'Filesystem Snapshot', $filesystem_status )
+		migwp_puller_snapshot_phase_payload( 'filesystem', 'Filesystem Snapshot', $filesystem_status )
 	);
 
 	$artifact_path = isset( $filesystem_status['artifact_path'] ) ? (string) $filesystem_status['artifact_path'] : '';
@@ -647,7 +647,7 @@ function flywp_puller_run( array $config, $observer = null ) {
 		throw new RuntimeException( 'Filesystem snapshot completed without artifact_path.' );
 	}
 
-	$transfer = flywp_puller_download_artifact(
+	$transfer = migwp_puller_download_artifact(
 		$config['rest_root'],
 		$config['migration_key'],
 		$artifact_path,
@@ -661,7 +661,7 @@ function flywp_puller_run( array $config, $observer = null ) {
 		'transfer'          => $transfer,
 	];
 
-	flywp_puller_notify( $observer, 'job.complete', $result );
+	migwp_puller_notify( $observer, 'job.complete', $result );
 
 	return $result;
 }

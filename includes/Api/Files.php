@@ -1,11 +1,11 @@
 <?php
 
-namespace FlyWP\Migrator\Api;
+namespace MigWP\Migrator\Api;
 
 use Exception;
-use FlyWP\Migrator\Api;
-use FlyWP\Migrator\Services\Snapshots\FilesystemSnapshotService;
-use FlyWP\Migrator\Services\Snapshots\WorkerTrigger;
+use MigWP\Migrator\Api;
+use MigWP\Migrator\Services\Snapshots\FilesystemSnapshotService;
+use MigWP\Migrator\Services\Snapshots\WorkerTrigger;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use WP_Error;
@@ -186,7 +186,7 @@ class Files {
         $relative = (string) $request->get_param( 'path' );
 
         if ( '' === $relative || false !== strpos( $relative, "\0" ) ) {
-            return new WP_Error( 'invalid_path', __( 'File path is required', 'flywp-migrator' ), [ 'status' => 400 ] );
+            return new WP_Error( 'invalid_path', __( 'File path is required', 'migwp-migrator' ), [ 'status' => 400 ] );
         }
 
         $relative = ltrim( str_replace( '\\', '/', $relative ), '/' );
@@ -197,7 +197,7 @@ class Files {
         }
 
         if ( ! is_file( $resolved ) || ! is_readable( $resolved ) ) {
-            return new WP_Error( 'file_not_found', __( 'File not found', 'flywp-migrator' ), [ 'status' => 404 ] );
+            return new WP_Error( 'file_not_found', __( 'File not found', 'migwp-migrator' ), [ 'status' => 404 ] );
         }
 
         $file_size    = filesize( $resolved );
@@ -244,11 +244,11 @@ class Files {
         $chunk    = $request->get_param( 'chunk' );
 
         if ( '' === $relative || false !== strpos( $relative, "\0" ) ) {
-            return new WP_Error( 'invalid_path', __( 'File path is required', 'flywp-migrator' ), [ 'status' => 400 ] );
+            return new WP_Error( 'invalid_path', __( 'File path is required', 'migwp-migrator' ), [ 'status' => 400 ] );
         }
 
         if ( null === $chunk || '' === $chunk || ! is_numeric( $chunk ) || (int) $chunk < 0 ) {
-            return new WP_Error( 'invalid_chunk', __( 'A valid chunk index is required', 'flywp-migrator' ), [ 'status' => 400 ] );
+            return new WP_Error( 'invalid_chunk', __( 'A valid chunk index is required', 'migwp-migrator' ), [ 'status' => 400 ] );
         }
 
         // Normalize input to a relative path.
@@ -263,7 +263,7 @@ class Files {
         $file_path = $resolved;
 
         if ( ! is_file( $file_path ) || ! is_readable( $file_path ) ) {
-            return new WP_Error( 'file_not_found', __( 'File not found', 'flywp-migrator' ), [ 'status' => 404 ] );
+            return new WP_Error( 'file_not_found', __( 'File not found', 'migwp-migrator' ), [ 'status' => 404 ] );
         }
 
         $file_size    = filesize( $file_path );
@@ -283,7 +283,7 @@ class Files {
         if ( $chunk_index >= $total_chunks ) {
             return new WP_Error(
                 'chunk_out_of_range',
-                __( 'Requested chunk is outside the file bounds', 'flywp-migrator' ),
+                __( 'Requested chunk is outside the file bounds', 'migwp-migrator' ),
                 [ 'status' => 416 ]
             );
         }
@@ -293,7 +293,7 @@ class Files {
 
         $fh = @fopen( $file_path, 'rb' );
         if ( ! $fh ) {
-            return new WP_Error( 'file_open_error', __( 'Could not open the file', 'flywp-migrator' ), [ 'status' => 500 ] );
+            return new WP_Error( 'file_open_error', __( 'Could not open the file', 'migwp-migrator' ), [ 'status' => 500 ] );
         }
 
         if ( $offset > 0 ) {
@@ -304,7 +304,7 @@ class Files {
         fclose( $fh );
 
         if ( false === $payload ) {
-            return new WP_Error( 'file_read_error', __( 'Could not read the file chunk', 'flywp-migrator' ), [ 'status' => 500 ] );
+            return new WP_Error( 'file_read_error', __( 'Could not read the file chunk', 'migwp-migrator' ), [ 'status' => 500 ] );
         }
 
         $payload_length = strlen( $payload );
@@ -315,15 +315,15 @@ class Files {
         header( 'Content-Disposition: attachment; filename="' . basename( $file_path ) . '"' );
         header( 'Content-Length: ' . $payload_length );
         header( 'Accept-Ranges: none' );
-        header( 'X-FlyWP-File-Path: ' . rawurlencode( $relative ) );
-        header( 'X-FlyWP-File-Size: ' . $file_size );
-        header( 'X-FlyWP-File-Etag: ' . $this->get_file_etag( $file_path, $file_size, $modified_at ) );
-        header( 'X-FlyWP-Chunk-Size: ' . $chunk_size );
-        header( 'X-FlyWP-Chunk-Index: ' . $chunk_index );
-        header( 'X-FlyWP-Chunk-Checksum: ' . $chunk_checksum );
-        header( 'X-FlyWP-Chunk-Bytes: ' . $offset . '-' . $offset_end );
-        header( 'X-FlyWP-Total-Chunks: ' . $total_chunks );
-        header( 'X-FlyWP-Is-Last-Chunk: ' . ( $chunk_index + 1 >= $total_chunks ? '1' : '0' ) );
+        header( 'X-MigWP-File-Path: ' . rawurlencode( $relative ) );
+        header( 'X-MigWP-File-Size: ' . $file_size );
+        header( 'X-MigWP-File-Etag: ' . $this->get_file_etag( $file_path, $file_size, $modified_at ) );
+        header( 'X-MigWP-Chunk-Size: ' . $chunk_size );
+        header( 'X-MigWP-Chunk-Index: ' . $chunk_index );
+        header( 'X-MigWP-Chunk-Checksum: ' . $chunk_checksum );
+        header( 'X-MigWP-Chunk-Bytes: ' . $offset . '-' . $offset_end );
+        header( 'X-MigWP-Total-Chunks: ' . $total_chunks );
+        header( 'X-MigWP-Is-Last-Chunk: ' . ( $chunk_index + 1 >= $total_chunks ? '1' : '0' ) );
         status_header( 200 );
 
         if ( function_exists( 'nocache_headers' ) ) {
@@ -392,7 +392,7 @@ class Files {
             return $candidate;
         }
 
-        return new WP_Error( 'forbidden_path', __( 'Path is outside allowed roots', 'flywp-migrator' ), [ 'status' => 403 ] );
+        return new WP_Error( 'forbidden_path', __( 'Path is outside allowed roots', 'migwp-migrator' ), [ 'status' => 403 ] );
     }
 
     /**
@@ -442,7 +442,7 @@ class Files {
         }
 
         return rest_ensure_response( [
-            'message'      => __( 'Manifest generated successfully', 'flywp-migrator' ),
+            'message'      => __( 'Manifest generated successfully', 'migwp-migrator' ),
             'total_chunks' => $total_chunks,
         ] );
     }
@@ -470,7 +470,7 @@ class Files {
                 'invalid_chunk',
                 sprintf(
                     /* translators: %d: chunk number, %d: total chunks */
-                    __( 'Invalid chunk number: %1$d. Total chunks: %2$d', 'flywp-migrator' ),
+                    __( 'Invalid chunk number: %1$d. Total chunks: %2$d', 'migwp-migrator' ),
                     $chunk_index,
                     $manifest['total_chunks']
                 )
@@ -526,7 +526,7 @@ class Files {
         if ( $zip->open( $zip_filename, ZipArchive::CREATE | ZipArchive::OVERWRITE ) !== true ) {
             return new WP_Error(
                 'zip_error',
-                __( 'Could not create empty zip file', 'flywp-migrator' )
+                __( 'Could not create empty zip file', 'migwp-migrator' )
             );
         }
 
@@ -536,7 +536,7 @@ class Files {
 
         // Create a comment with metadata
         $zip->setArchiveComment( json_encode( [
-            'generator'    => 'FlyWP Migration Plugin',
+            'generator'    => 'MigWP Migration Plugin',
             'date'         => current_time( 'mysql' ),
             'site_url'     => get_site_url(),
             'file_count'   => 1,
@@ -559,7 +559,7 @@ class Files {
         if ( $file_content === false ) {
             return new WP_Error(
                 'file_read_error',
-                __( 'Could not read the zip file', 'flywp-migrator' )
+                __( 'Could not read the zip file', 'migwp-migrator' )
             );
         }
 
@@ -686,7 +686,7 @@ class Files {
             }
         } catch ( Exception $e ) {
             // Log error but continue with empty file list
-            error_log( 'FlyWP Migration: Error scanning directory: ' . $e->getMessage() );
+            error_log( 'MigWP Migration: Error scanning directory: ' . $e->getMessage() );
         }
 
         return $files;
@@ -761,7 +761,7 @@ class Files {
         if ( empty( $files ) ) {
             return new WP_Error(
                 'empty_file_list',
-                __( 'No files found to zip', 'flywp-migrator' )
+                __( 'No files found to zip', 'migwp-migrator' )
             );
         }
 
@@ -772,7 +772,7 @@ class Files {
         if ( $zip->open( $zip_filename, ZipArchive::CREATE | ZipArchive::OVERWRITE ) !== true ) {
             return new WP_Error(
                 'zip_error',
-                __( 'Could not create zip file', 'flywp-migrator' )
+                __( 'Could not create zip file', 'migwp-migrator' )
             );
         }
 
@@ -788,7 +788,7 @@ class Files {
                     $added_files++;
                 } catch ( Exception $e ) {
                     // Skip problematic files but continue with the rest
-                    error_log( 'FlyWP Migration: Error adding file to zip: ' . $e->getMessage() );
+                    error_log( 'MigWP Migration: Error adding file to zip: ' . $e->getMessage() );
                 }
             }
         }
@@ -801,13 +801,13 @@ class Files {
 
             return new WP_Error(
                 'no_files_added',
-                __( 'No files could be added to the zip archive', 'flywp-migrator' )
+                __( 'No files could be added to the zip archive', 'migwp-migrator' )
             );
         }
 
         // Create a comment with metadata
         $zip->setArchiveComment( json_encode( [
-            'generator'    => 'FlyWP Migration Plugin',
+            'generator'    => 'MigWP Migration Plugin',
             'date'         => current_time( 'mysql' ),
             'site_url'     => get_site_url(),
             'file_count'   => $added_files,
@@ -831,7 +831,7 @@ class Files {
         if ( $file_content === false ) {
             return new WP_Error(
                 'file_read_error',
-                __( 'Could not read the zip file', 'flywp-migrator' )
+                __( 'Could not read the zip file', 'migwp-migrator' )
             );
         }
 
@@ -848,11 +848,11 @@ class Files {
      * @return string
      */
     private function get_temp_dir() {
-        $dirname = get_option( 'flywp_migrate_temp_dir' );
+        $dirname = get_option( 'migwp_migrate_temp_dir' );
 
         if ( empty( $dirname ) ) {
-            $dirname = 'flywp-temp-' . substr( md5( time() . wp_rand() ), 0, 6 );
-            update_option( 'flywp_migrate_temp_dir', $dirname );
+            $dirname = 'migwp-temp-' . substr( md5( time() . wp_rand() ), 0, 6 );
+            update_option( 'migwp_migrate_temp_dir', $dirname );
         }
 
         $content_dir = WP_CONTENT_DIR;

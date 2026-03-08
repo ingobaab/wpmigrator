@@ -1,6 +1,6 @@
 <?php
 
-namespace FlyWP\Migrator;
+namespace MigWP\Migrator;
 
 use WP_Error;
 use WP_REST_Request;
@@ -18,7 +18,7 @@ class Api
      *
      * @var string
      */
-    const NAMESPACE = 'flywp-migrator/v1';
+    const NAMESPACE = 'migwp-migrator/v1';
 
     /**
      * Database API handler
@@ -104,13 +104,13 @@ class Api
         $key = $request->get_param('key');
 
         if (empty($key)) {
-            return new WP_Error('invalid_key', __('Migration key is required', 'flywp-migrator'));
+            return new WP_Error('invalid_key', __('Migration key is required', 'migwp-migrator'));
         }
 
-        $stored_key = flywp_migrator()->get_migration_key();
+        $stored_key = migwp_migrator()->get_migration_key();
 
         if ($key !== $stored_key) {
-            return new WP_Error('invalid_key', __('Invalid migration key', 'flywp-migrator'));
+            return new WP_Error('invalid_key', __('Invalid migration key', 'migwp-migrator'));
         }
 
         // get the first admin user
@@ -122,7 +122,7 @@ class Api
             'email'            => $user[0]->user_email,
             'url'              => home_url(),
             'site_title'       => get_bloginfo('name'),
-            'key'              => flywp_migrator()->get_migration_key(),
+            'key'              => migwp_migrator()->get_migration_key(),
             'is_multisite'     => is_multisite(),
             'prefix'           => $wpdb->prefix,
             'php_version'      => PHP_VERSION,
@@ -152,7 +152,7 @@ class Api
             'email'            => $user[0]->user_email,
             'url'              => home_url(),
             'site_title'       => get_bloginfo('name'),
-            'key'              => flywp_migrator()->get_migration_key(),
+            'key'              => migwp_migrator()->get_migration_key(),
             'is_multisite'     => is_multisite(),
             'prefix'           => $wpdb->prefix,
             'php_version'      => PHP_VERSION,
@@ -201,7 +201,7 @@ class Api
      */
     public static function check_permission($request)
     {
-        $key = $request->get_header('X-FlyWP-Key');
+        $key = $request->get_header('X-MigWP-Key');
 
         // If header not found, check query parameter
         if (empty($key)) {
@@ -209,13 +209,13 @@ class Api
         }
 
         if (empty($key)) {
-            return new WP_Error('unauthorized', __('Migration key is required', 'flywp-migrator'));
+            return new WP_Error('unauthorized', __('Migration key is required', 'migwp-migrator'));
         }
 
-        $stored_key = flywp_migrator()->get_migration_key();
+        $stored_key = migwp_migrator()->get_migration_key();
 
         if ($key !== $stored_key) {
-            return new WP_Error('unauthorized', __('Invalid migration key', 'flywp-migrator'));
+            return new WP_Error('unauthorized', __('Invalid migration key', 'migwp-migrator'));
         }
 
         return true;

@@ -1,10 +1,10 @@
 <?php
 
-namespace FlyWP\Migrator\Api;
+namespace MigWP\Migrator\Api;
 
-use FlyWP\Migrator\Api;
-use FlyWP\Migrator\Services\Snapshots\DatabaseSnapshotService;
-use FlyWP\Migrator\Services\Snapshots\WorkerTrigger;
+use MigWP\Migrator\Api;
+use MigWP\Migrator\Services\Snapshots\DatabaseSnapshotService;
+use MigWP\Migrator\Services\Snapshots\WorkerTrigger;
 use WP_REST_Request;
 use WP_REST_Server;
 

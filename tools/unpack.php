@@ -7,7 +7,7 @@ if ( PHP_SAPI !== 'cli' ) {
 	exit( 1 );
 }
 
-$config_path = flywp_unpack_default_config_path();
+$config_path = migwp_unpack_default_config_path();
 $artifact    = null;
 $target_dir  = null;
 
@@ -47,10 +47,10 @@ for ( $i = 1; $i < $argc; $i++ ) {
 }
 
 try {
-	$config = flywp_unpack_load_config( $config_path );
+	$config = migwp_unpack_load_config( $config_path );
 
 	if ( null === $artifact || '' === trim( (string) $artifact ) ) {
-		$artifact = flywp_unpack_find_latest_artifact( $config['output_dir'] );
+		$artifact = migwp_unpack_find_latest_artifact( $config['output_dir'] );
 	}
 
 	if ( ! is_file( $artifact ) ) {
@@ -65,7 +65,7 @@ try {
 	echo "Artifact: {$artifact}\n";
 	echo "Output dir: {$target_dir}\n";
 
-	$result = flywp_unpack_extract_snapshot(
+	$result = migwp_unpack_extract_snapshot(
 		$artifact,
 		$config['migration_key'],
 		$target_dir,

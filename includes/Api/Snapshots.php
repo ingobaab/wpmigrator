@@ -1,11 +1,11 @@
 <?php
 
-namespace FlyWP\Migrator\Api;
+namespace MigWP\Migrator\Api;
 
-use FlyWP\Migrator\Api;
-use FlyWP\Migrator\Services\Snapshots\ConfigStore;
-use FlyWP\Migrator\Services\Snapshots\FilesystemSnapshotService;
-use FlyWP\Migrator\Services\Snapshots\StateStore;
+use MigWP\Migrator\Api;
+use MigWP\Migrator\Services\Snapshots\ConfigStore;
+use MigWP\Migrator\Services\Snapshots\FilesystemSnapshotService;
+use MigWP\Migrator\Services\Snapshots\StateStore;
 use WP_REST_Request;
 use WP_REST_Server;
 

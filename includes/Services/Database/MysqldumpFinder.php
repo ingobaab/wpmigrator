@@ -1,6 +1,6 @@
 <?php
 
-namespace FlyWP\Migrator\Services\Database;
+namespace MigWP\Migrator\Services\Database;
 
 /**
  * Find and validate mysqldump binary
@@ -91,7 +91,7 @@ class MysqldumpFinder {
 			}
 
 			// Allow --max_allowed_packet to be configured via constant
-			$msqld_max_allowed_packet = ( defined( 'FLYWP_MYSQLDUMP_MAX_ALLOWED_PACKET' ) && ( is_int( FLYWP_MYSQLDUMP_MAX_ALLOWED_PACKET ) || is_string( FLYWP_MYSQLDUMP_MAX_ALLOWED_PACKET ) ) ) ? FLYWP_MYSQLDUMP_MAX_ALLOWED_PACKET : '1M';
+			$msqld_max_allowed_packet = ( defined( 'MIGWP_MYSQLDUMP_MAX_ALLOWED_PACKET' ) && ( is_int( MIGWP_MYSQLDUMP_MAX_ALLOWED_PACKET ) || is_string( MIGWP_MYSQLDUMP_MAX_ALLOWED_PACKET ) ) ) ? MIGWP_MYSQLDUMP_MAX_ALLOWED_PACKET : '1M';
 
 			$exec .= "$potsql --defaults-file=$pfile --max_allowed_packet=$msqld_max_allowed_packet --quote-names --add-drop-table";
 

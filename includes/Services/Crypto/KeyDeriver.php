@@ -1,6 +1,6 @@
 <?php
 
-namespace FlyWP\Migrator\Services\Crypto;
+namespace MigWP\Migrator\Services\Crypto;
 
 class KeyDeriver {
 	/**
@@ -18,7 +18,7 @@ class KeyDeriver {
 			'sha256',
 			(string) $migration_key,
 			SODIUM_CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_KEYBYTES,
-			'flywp-migrator:' . $purpose . ':' . $snapshot_id,
+			'migwp-migrator:' . $purpose . ':' . $snapshot_id,
 			$salt
 		);
 	}

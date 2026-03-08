@@ -1,11 +1,11 @@
 /**
- * FlyWP Migration Admin Scripts
+ * MigWP Migration Admin Scripts
  */
 
 jQuery(document).ready(function ($) {
     // Toggle password visibility
-    $(".flywp-toggle-password").on("click", function () {
-        var input = $("#flywp-migration-key");
+    $(".migwp-toggle-password").on("click", function () {
+        var input = $("#migwp-migration-key");
         var icon = $(this).find("span.dashicons");
 
         if (input.attr("type") === "password") {
@@ -18,8 +18,8 @@ jQuery(document).ready(function ($) {
     });
 
     // Copy migration key to clipboard
-    $(".flywp-copy-clipboard").on("click", function () {
-        var key = $("#flywp-migration-key");
+    $(".migwp-copy-clipboard").on("click", function () {
+        var key = $("#migwp-migration-key");
         var keyValue = key.val();
         var $button = $(this);
         var $buttonText = $button.find('span:last-child');

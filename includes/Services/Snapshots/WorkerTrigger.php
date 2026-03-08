@@ -1,6 +1,6 @@
 <?php
 
-namespace FlyWP\Migrator\Services\Snapshots;
+namespace MigWP\Migrator\Services\Snapshots;
 
 class WorkerTrigger {
 	/**

@@ -2,30 +2,30 @@
 
 require_once __DIR__ . '/tools/pull-lib.php';
 
-const FLYWP_PULL_WEBGUI_STATE_DIR = '/tmp/flywp-puller-webgui';
+const MIGWP_PULL_WEBGUI_STATE_DIR = '/tmp/migwp-puller-webgui';
 
 if ( PHP_SAPI === 'cli' ) {
-	flywp_pull_webgui_run_worker_cli( $argv );
+	migwp_pull_webgui_run_worker_cli( $argv );
 	exit( 0 );
 }
 
 $action = isset( $_GET['action'] ) ? (string) $_GET['action'] : '';
 
 if ( 'start' === $action ) {
-	flywp_pull_webgui_handle_start();
+	migwp_pull_webgui_handle_start();
 	return;
 }
 
 if ( 'status' === $action ) {
-	flywp_pull_webgui_handle_status();
+	migwp_pull_webgui_handle_status();
 	return;
 }
 
-flywp_pull_webgui_render_page();
+migwp_pull_webgui_render_page();
 
-function flywp_pull_webgui_run_worker_cli( array $argv ) {
+function migwp_pull_webgui_run_worker_cli( array $argv ) {
 	$job_id      = null;
-	$config_path = flywp_puller_default_config_path();
+	$config_path = migwp_puller_default_config_path();
 
 	foreach ( $argv as $arg ) {
 		if ( 0 === strpos( (string) $arg, '--worker=' ) ) {
@@ -42,8 +42,8 @@ function flywp_pull_webgui_run_worker_cli( array $argv ) {
 		exit( 1 );
 	}
 
-	$config = flywp_puller_load_config( $config_path );
-	$state  = flywp_pull_webgui_read_state( $job_id );
+	$config = migwp_puller_load_config( $config_path );
+	$state  = migwp_pull_webgui_read_state( $job_id );
 
 	if ( ! is_array( $state ) ) {
 		throw new RuntimeException( "Unknown job: {$job_id}" );
@@ -52,13 +52,13 @@ function flywp_pull_webgui_run_worker_cli( array $argv ) {
 	$state['status']     = 'running';
 	$state['started_at'] = gmdate( 'c' );
 	$state['updated_at'] = $state['started_at'];
-	flywp_pull_webgui_write_state( $job_id, $state );
+	migwp_pull_webgui_write_state( $job_id, $state );
 
 	try {
-		$result = flywp_puller_run(
+		$result = migwp_puller_run(
 			$config,
 			static function ( $event, array $payload ) use ( $job_id ) {
-				$state = flywp_pull_webgui_read_state( $job_id );
+				$state = migwp_pull_webgui_read_state( $job_id );
 				if ( ! is_array( $state ) ) {
 					return;
 				}
@@ -88,19 +88,19 @@ function flywp_pull_webgui_run_worker_cli( array $argv ) {
 					$state['result']      = $payload;
 				}
 
-				flywp_pull_webgui_write_state( $job_id, $state );
+				migwp_pull_webgui_write_state( $job_id, $state );
 			}
 		);
 
-		$state               = flywp_pull_webgui_read_state( $job_id );
+		$state               = migwp_pull_webgui_read_state( $job_id );
 		$state['status']     = 'complete';
 		$state['phase']      = 'complete';
 		$state['updated_at'] = gmdate( 'c' );
 		$state['finished_at'] = $state['updated_at'];
 		$state['result']     = $result;
-		flywp_pull_webgui_write_state( $job_id, $state );
+		migwp_pull_webgui_write_state( $job_id, $state );
 	} catch ( RuntimeException $e ) {
-		$state                = flywp_pull_webgui_read_state( $job_id );
+		$state                = migwp_pull_webgui_read_state( $job_id );
 		$state['status']      = 'failed';
 		$state['error']       = $e->getMessage();
 		$state['updated_at']  = gmdate( 'c' );
@@ -116,17 +116,17 @@ function flywp_pull_webgui_run_worker_cli( array $argv ) {
 			$state['phases']['transfer']['status'] = 'failed';
 		}
 
-		flywp_pull_webgui_write_state( $job_id, $state );
+		migwp_pull_webgui_write_state( $job_id, $state );
 		exit( 1 );
 	}
 }
 
-function flywp_pull_webgui_handle_start() {
-	flywp_pull_webgui_send_json_headers();
+function migwp_pull_webgui_handle_start() {
+	migwp_pull_webgui_send_json_headers();
 
 	try {
-		$config_path = isset( $_POST['config_path'] ) ? trim( (string) $_POST['config_path'] ) : flywp_puller_default_config_path();
-		$config      = flywp_puller_load_config( $config_path );
+		$config_path = isset( $_POST['config_path'] ) ? trim( (string) $_POST['config_path'] ) : migwp_puller_default_config_path();
+		$config      = migwp_puller_load_config( $config_path );
 		$job_id      = bin2hex( random_bytes( 8 ) );
 		$created_at  = gmdate( 'c' );
 
@@ -147,14 +147,14 @@ function flywp_pull_webgui_handle_start() {
 				'poll_interval_seconds' => $config['poll_interval_seconds'],
 			],
 			'phases'      => [
-				'database'   => flywp_pull_webgui_initial_snapshot_phase( 'Database Snapshot' ),
-				'filesystem' => flywp_pull_webgui_initial_snapshot_phase( 'Filesystem Snapshot' ),
-				'transfer'   => flywp_pull_webgui_initial_transfer_phase(),
+				'database'   => migwp_pull_webgui_initial_snapshot_phase( 'Database Snapshot' ),
+				'filesystem' => migwp_pull_webgui_initial_snapshot_phase( 'Filesystem Snapshot' ),
+				'transfer'   => migwp_pull_webgui_initial_transfer_phase(),
 			],
 		];
 
-		flywp_pull_webgui_write_state( $job_id, $state );
-		flywp_pull_webgui_spawn_worker( $job_id, $config_path );
+		migwp_pull_webgui_write_state( $job_id, $state );
+		migwp_pull_webgui_spawn_worker( $job_id, $config_path );
 
 		echo json_encode( $state, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
 	} catch ( Throwable $e ) {
@@ -168,8 +168,8 @@ function flywp_pull_webgui_handle_start() {
 	}
 }
 
-function flywp_pull_webgui_handle_status() {
-	flywp_pull_webgui_send_json_headers();
+function migwp_pull_webgui_handle_status() {
+	migwp_pull_webgui_send_json_headers();
 
 	$job_id = isset( $_GET['job_id'] ) ? trim( (string) $_GET['job_id'] ) : '';
 	if ( '' === $job_id ) {
@@ -178,7 +178,7 @@ function flywp_pull_webgui_handle_status() {
 		return;
 	}
 
-	$state = flywp_pull_webgui_read_state( $job_id );
+	$state = migwp_pull_webgui_read_state( $job_id );
 	if ( ! is_array( $state ) ) {
 		http_response_code( 404 );
 		echo json_encode( [ 'error' => 'Job not found.' ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
@@ -188,8 +188,8 @@ function flywp_pull_webgui_handle_status() {
 	echo json_encode( $state, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
 }
 
-function flywp_pull_webgui_render_page() {
-	$default_config_path = htmlspecialchars( flywp_puller_default_config_path(), ENT_QUOTES, 'UTF-8' );
+function migwp_pull_webgui_render_page() {
+	$default_config_path = htmlspecialchars( migwp_puller_default_config_path(), ENT_QUOTES, 'UTF-8' );
 	$self                = htmlspecialchars( $_SERVER['PHP_SELF'] ?? 'pull-webgui.php', ENT_QUOTES, 'UTF-8' );
 
 	header( 'Content-Type: text/html; charset=utf-8' );
@@ -199,7 +199,7 @@ function flywp_pull_webgui_render_page() {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>FlyWP Pull Web GUI</title>
+    <title>MigWP Pull Web GUI</title>
     <style>
         :root {
             --bg: #f4efe5;
@@ -326,7 +326,7 @@ function flywp_pull_webgui_render_page() {
 <body>
 <div class="shell">
     <div class="panel">
-        <h1>FlyWP Pull Web GUI</h1>
+        <h1>MigWP Pull Web GUI</h1>
         <p>Server-side puller runner with three sequential progress bars and disk-backed job state.</p>
 
         <form id="start-form" class="controls">
@@ -506,7 +506,7 @@ function flywp_pull_webgui_render_page() {
 <?php
 }
 
-function flywp_pull_webgui_initial_snapshot_phase( $label ) {
+function migwp_pull_webgui_initial_snapshot_phase( $label ) {
 	return [
 		'label'                => $label,
 		'status'               => 'idle',
@@ -523,7 +523,7 @@ function flywp_pull_webgui_initial_snapshot_phase( $label ) {
 	];
 }
 
-function flywp_pull_webgui_initial_transfer_phase() {
+function migwp_pull_webgui_initial_transfer_phase() {
 	return [
 		'label'            => 'Transfer',
 		'status'           => 'idle',
@@ -541,20 +541,20 @@ function flywp_pull_webgui_initial_transfer_phase() {
 	];
 }
 
-function flywp_pull_webgui_state_dir() {
-	if ( ! is_dir( FLYWP_PULL_WEBGUI_STATE_DIR ) && ! mkdir( FLYWP_PULL_WEBGUI_STATE_DIR, 0777, true ) && ! is_dir( FLYWP_PULL_WEBGUI_STATE_DIR ) ) {
+function migwp_pull_webgui_state_dir() {
+	if ( ! is_dir( MIGWP_PULL_WEBGUI_STATE_DIR ) && ! mkdir( MIGWP_PULL_WEBGUI_STATE_DIR, 0777, true ) && ! is_dir( MIGWP_PULL_WEBGUI_STATE_DIR ) ) {
 		throw new RuntimeException( 'Could not create web GUI state dir.' );
 	}
 
-	return FLYWP_PULL_WEBGUI_STATE_DIR;
+	return MIGWP_PULL_WEBGUI_STATE_DIR;
 }
 
-function flywp_pull_webgui_state_path( $job_id ) {
-	return flywp_pull_webgui_state_dir() . '/' . preg_replace( '/[^a-f0-9]/', '', (string) $job_id ) . '.json';
+function migwp_pull_webgui_state_path( $job_id ) {
+	return migwp_pull_webgui_state_dir() . '/' . preg_replace( '/[^a-f0-9]/', '', (string) $job_id ) . '.json';
 }
 
-function flywp_pull_webgui_read_state( $job_id ) {
-	$path = flywp_pull_webgui_state_path( $job_id );
+function migwp_pull_webgui_read_state( $job_id ) {
+	$path = migwp_pull_webgui_state_path( $job_id );
 	if ( ! is_file( $path ) ) {
 		return null;
 	}
@@ -562,8 +562,8 @@ function flywp_pull_webgui_read_state( $job_id ) {
 	return json_decode( (string) file_get_contents( $path ), true );
 }
 
-function flywp_pull_webgui_write_state( $job_id, array $state ) {
-	$path      = flywp_pull_webgui_state_path( $job_id );
+function migwp_pull_webgui_write_state( $job_id, array $state ) {
+	$path      = migwp_pull_webgui_state_path( $job_id );
 	$temp_path = $path . '.tmp';
 	$json      = json_encode( $state, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
 
@@ -571,7 +571,7 @@ function flywp_pull_webgui_write_state( $job_id, array $state ) {
 	rename( $temp_path, $path );
 }
 
-function flywp_pull_webgui_spawn_worker( $job_id, $config_path ) {
+function migwp_pull_webgui_spawn_worker( $job_id, $config_path ) {
 	$php = defined( 'PHP_BINARY' ) && PHP_BINARY ? PHP_BINARY : 'php';
 	$cmd = sprintf(
 		'%s %s %s %s > /dev/null 2>&1 &',
@@ -584,7 +584,7 @@ function flywp_pull_webgui_spawn_worker( $job_id, $config_path ) {
 	exec( $cmd );
 }
 
-function flywp_pull_webgui_send_json_headers() {
+function migwp_pull_webgui_send_json_headers() {
 	header( 'Content-Type: application/json; charset=utf-8' );
 	header( 'Cache-Control: no-store, no-cache, must-revalidate' );
 }

@@ -1,17 +1,17 @@
 {
-    "name": "flywp/flywp-migrator",
-    "description": "Migrate your WordPress site to FlyWP",
+    "name": "migwp/migwp-migrator",
+    "description": "Migrate your WordPress site to MigWP",
     "type": "wordpress-plugin",
     "license": "GPLv3",
     "autoload": {
         "psr-4": {
-            "FlyWP\\Migrator\\": "includes/"
+            "MigWP\\Migrator\\": "includes/"
         }
     },
     "authors": [
         {
-            "name": "FlyWP Team",
-            "email": "support@flywp.com"
+            "name": "MigWP Team",
+            "email": "support@migwp.com"
         }
     ],
     "minimum-stability": "dev",

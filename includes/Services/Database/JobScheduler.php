@@ -1,6 +1,6 @@
 <?php
 
-namespace FlyWP\Migrator\Services\Database;
+namespace MigWP\Migrator\Services\Database;
 
 /**
  * Job Scheduler for managing backup job resumption and timing
@@ -85,7 +85,7 @@ class JobScheduler {
 	 * @return int
 	 */
 	public static function get_initial_resume_interval() {
-		$interval = get_site_transient( 'flywp_initial_resume_interval' );
+		$interval = get_site_transient( 'migwp_initial_resume_interval' );
 		if ( $interval && is_numeric( $interval ) ) {
 			return (int) $interval;
 		}
@@ -119,7 +119,7 @@ class JobScheduler {
 		$resume_interval = self::$jobdata->get( 'resume_interval' );
 		if ( $time_this_run + 30 > $resume_interval ) {
 			$new_interval = ceil( $time_this_run + 30 );
-			set_site_transient( 'flywp_initial_resume_interval', (int) $new_interval, 8 * 86400 );
+			set_site_transient( 'migwp_initial_resume_interval', (int) $new_interval, 8 * 86400 );
 			self::$jobdata->set( 'resume_interval', $new_interval );
 		}
 	}

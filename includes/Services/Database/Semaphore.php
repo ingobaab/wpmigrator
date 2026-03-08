@@ -1,6 +1,6 @@
 <?php
 
-namespace FlyWP\Migrator\Services\Database;
+namespace MigWP\Migrator\Services\Database;
 
 /**
  * Simple semaphore implementation for preventing overlapping backup jobs
@@ -48,7 +48,7 @@ class Semaphore {
 	 * @param int    $locked_for Time (in seconds) after which the lock will expire if not released.
 	 */
 	public function __construct( $name, $locked_for = 300 ) {
-		$this->option_name = 'flywp_lock_' . $name;
+		$this->option_name = 'migwp_lock_' . $name;
 		$this->locked_for  = $locked_for;
 	}
 

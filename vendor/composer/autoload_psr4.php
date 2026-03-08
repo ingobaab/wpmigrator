@@ -6,5 +6,5 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'FlyWP\\Migrator\\' => array($baseDir . '/includes'),
+    'MigWP\\Migrator\\' => array($baseDir . '/includes'),
 );

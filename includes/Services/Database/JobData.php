@@ -1,6 +1,6 @@
 <?php
 
-namespace FlyWP\Migrator\Services\Database;
+namespace MigWP\Migrator\Services\Database;
 
 /**
  * Database backup job data management
@@ -10,7 +10,7 @@ class JobData {
 	/**
 	 * Option prefix for job data
 	 */
-	const OPTION_PREFIX = 'flywp_jobdata_';
+	const OPTION_PREFIX = 'migwp_jobdata_';
 
 	/**
 	 * Job nonce (12 character hex string)

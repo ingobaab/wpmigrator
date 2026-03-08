@@ -2,7 +2,7 @@
   "base_url": "http://localhost:8888",
   "rest_root": "http://localhost:8888/wp-json",
   "migration_key": "replace-me-after-activation",
-  "output_dir": "/tmp/flywp-puller",
+  "output_dir": "/tmp/migwp-puller",
   "poll_interval_seconds": 1,
   "poll_timeout_seconds": 1800
 }

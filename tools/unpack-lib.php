@@ -1,10 +1,10 @@
 <?php
 
-function flywp_unpack_default_config_path() {
+function migwp_unpack_default_config_path() {
 	return __DIR__ . '/pull-config.json';
 }
 
-function flywp_unpack_load_config( $config_path ) {
+function migwp_unpack_load_config( $config_path ) {
 	if ( ! is_file( $config_path ) ) {
 		throw new RuntimeException( "Config file not found: {$config_path}" );
 	}
@@ -17,7 +17,7 @@ function flywp_unpack_load_config( $config_path ) {
 
 	$output_dir = isset( $config['output_dir'] ) && '' !== trim( (string) $config['output_dir'] )
 		? (string) $config['output_dir']
-		: sys_get_temp_dir() . '/flywp-puller';
+		: sys_get_temp_dir() . '/migwp-puller';
 
 	return [
 		'config_path'    => $config_path,
@@ -26,7 +26,7 @@ function flywp_unpack_load_config( $config_path ) {
 	];
 }
 
-function flywp_unpack_find_latest_artifact( $output_dir ) {
+function migwp_unpack_find_latest_artifact( $output_dir ) {
 	$candidates = glob( rtrim( $output_dir, '/\\' ) . DIRECTORY_SEPARATOR . '*.fwsnap' );
 
 	if ( ! is_array( $candidates ) || empty( $candidates ) ) {
@@ -43,17 +43,17 @@ function flywp_unpack_find_latest_artifact( $output_dir ) {
 	return $candidates[0];
 }
 
-function flywp_unpack_derive_secretstream_key( $migration_key, $snapshot_id, $salt, $purpose ) {
+function migwp_unpack_derive_secretstream_key( $migration_key, $snapshot_id, $salt, $purpose ) {
 	return hash_hkdf(
 		'sha256',
 		(string) $migration_key,
 		SODIUM_CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_KEYBYTES,
-		'flywp-migrator:' . $purpose . ':' . $snapshot_id,
+		'migwp-migrator:' . $purpose . ':' . $snapshot_id,
 		$salt
 	);
 }
 
-function flywp_unpack_read_exact( $handle, $length ) {
+function migwp_unpack_read_exact( $handle, $length ) {
 	$buffer = '';
 
 	while ( strlen( $buffer ) < $length && ! feof( $handle ) ) {
@@ -69,8 +69,8 @@ function flywp_unpack_read_exact( $handle, $length ) {
 	return strlen( $buffer ) === $length ? $buffer : false;
 }
 
-function flywp_unpack_read_u32( $handle ) {
-	$raw = flywp_unpack_read_exact( $handle, 4 );
+function migwp_unpack_read_u32( $handle ) {
+	$raw = migwp_unpack_read_exact( $handle, 4 );
 
 	if ( false === $raw ) {
 		return false;
@@ -81,7 +81,7 @@ function flywp_unpack_read_u32( $handle ) {
 	return (int) $unpacked['value'];
 }
 
-function flywp_unpack_stream_plain_chunks( $handle, $state ) {
+function migwp_unpack_stream_plain_chunks( $handle, $state ) {
 	while ( true ) {
 		$length_raw = fread( $handle, 4 );
 
@@ -100,7 +100,7 @@ function flywp_unpack_stream_plain_chunks( $handle, $state ) {
 		$length_info = unpack( 'Nvalue', $length_raw );
 		$length      = (int) $length_info['value'];
 
-		$ciphertext = flywp_unpack_read_exact( $handle, $length );
+		$ciphertext = migwp_unpack_read_exact( $handle, $length );
 		if ( false === $ciphertext ) {
 			throw new RuntimeException( 'Unexpected EOF while reading encrypted chunk payload.' );
 		}
@@ -117,7 +117,7 @@ function flywp_unpack_stream_plain_chunks( $handle, $state ) {
 	}
 }
 
-function flywp_unpack_stream_gzip_file_to_file( $gzip_path, $target_path ) {
+function migwp_unpack_stream_gzip_file_to_file( $gzip_path, $target_path ) {
 	$source = fopen( $gzip_path, 'rb' );
 	$target = fopen( $target_path, 'wb' );
 
@@ -189,7 +189,7 @@ function flywp_unpack_stream_gzip_file_to_file( $gzip_path, $target_path ) {
 	fclose( $target );
 }
 
-function flywp_unpack_normalize_relative_path( $path ) {
+function migwp_unpack_normalize_relative_path( $path ) {
 	$path  = str_replace( '\\', '/', (string) $path );
 	$parts = [];
 
@@ -208,17 +208,17 @@ function flywp_unpack_normalize_relative_path( $path ) {
 	return implode( '/', $parts );
 }
 
-function flywp_unpack_output_path( $output_dir, $relative_path ) {
-	$relative_path = flywp_unpack_normalize_relative_path( $relative_path );
+function migwp_unpack_output_path( $output_dir, $relative_path ) {
+	$relative_path = migwp_unpack_normalize_relative_path( $relative_path );
 
 	return rtrim( $output_dir, '/\\' ) . DIRECTORY_SEPARATOR . str_replace( '/', DIRECTORY_SEPARATOR, $relative_path );
 }
 
-function flywp_unpack_sql_relative_path( $db_relative_path ) {
-	$relative = flywp_unpack_normalize_relative_path( (string) $db_relative_path );
+function migwp_unpack_sql_relative_path( $db_relative_path ) {
+	$relative = migwp_unpack_normalize_relative_path( (string) $db_relative_path );
 
 	if ( '' === $relative ) {
-		return '__flywp/database/latest.sql';
+		return '__migwp/database/latest.sql';
 	}
 
 	$info      = pathinfo( $relative );
@@ -228,7 +228,7 @@ function flywp_unpack_sql_relative_path( $db_relative_path ) {
 	return $directory . $filename . '.sql';
 }
 
-function flywp_unpack_mkdir( $dir ) {
+function migwp_unpack_mkdir( $dir ) {
 	if ( is_dir( $dir ) ) {
 		return;
 	}
@@ -238,21 +238,21 @@ function flywp_unpack_mkdir( $dir ) {
 	}
 }
 
-function flywp_unpack_load_archive_header( $artifact, $migration_key ) {
+function migwp_unpack_load_archive_header( $artifact, $migration_key ) {
 	$fp = fopen( $artifact, 'rb' );
 
 	if ( false === $fp ) {
 		throw new RuntimeException( "Could not open artifact: {$artifact}" );
 	}
 
-	$magic = flywp_unpack_read_exact( $fp, 8 );
+	$magic = migwp_unpack_read_exact( $fp, 8 );
 	if ( "FWSNAP1\n" !== $magic ) {
 		fclose( $fp );
 		throw new RuntimeException( 'Invalid archive magic.' );
 	}
 
-	$header_length = flywp_unpack_read_u32( $fp );
-	$header_json   = flywp_unpack_read_exact( $fp, $header_length );
+	$header_length = migwp_unpack_read_u32( $fp );
+	$header_json   = migwp_unpack_read_exact( $fp, $header_length );
 	$header        = json_decode( (string) $header_json, true );
 
 	if ( ! is_array( $header ) ) {
@@ -260,7 +260,7 @@ function flywp_unpack_load_archive_header( $artifact, $migration_key ) {
 		throw new RuntimeException( 'Invalid archive header JSON.' );
 	}
 
-	$payload_key = flywp_unpack_derive_secretstream_key(
+	$payload_key = migwp_unpack_derive_secretstream_key(
 		$migration_key,
 		(string) $header['snapshot_id'],
 		base64_decode( (string) $header['salt'], true ),
@@ -278,14 +278,14 @@ function flywp_unpack_load_archive_header( $artifact, $migration_key ) {
 	];
 }
 
-function flywp_unpack_decrypt_database_dump( $encrypted_dump_path, $migration_key, $target_dir, $db_relative_path ) {
+function migwp_unpack_decrypt_database_dump( $encrypted_dump_path, $migration_key, $target_dir, $db_relative_path ) {
 	$db_handle = fopen( $encrypted_dump_path, 'rb' );
 	if ( false === $db_handle ) {
 		throw new RuntimeException( "Could not open embedded database dump: {$encrypted_dump_path}" );
 	}
 
-	$db_header_length = flywp_unpack_read_u32( $db_handle );
-	$db_header_json   = flywp_unpack_read_exact( $db_handle, $db_header_length );
+	$db_header_length = migwp_unpack_read_u32( $db_handle );
+	$db_header_json   = migwp_unpack_read_exact( $db_handle, $db_header_length );
 	$db_header        = json_decode( (string) $db_header_json, true );
 
 	if ( ! is_array( $db_header ) ) {
@@ -293,7 +293,7 @@ function flywp_unpack_decrypt_database_dump( $encrypted_dump_path, $migration_ke
 		throw new RuntimeException( 'Invalid embedded database dump header.' );
 	}
 
-	$db_key = flywp_unpack_derive_secretstream_key(
+	$db_key = migwp_unpack_derive_secretstream_key(
 		$migration_key,
 		(string) $db_header['snapshot'],
 		base64_decode( (string) $db_header['salt'], true ),
@@ -304,12 +304,12 @@ function flywp_unpack_decrypt_database_dump( $encrypted_dump_path, $migration_ke
 		$db_key
 	);
 
-	$db_plain_chunks = flywp_unpack_stream_plain_chunks( $db_handle, $db_state );
+	$db_plain_chunks = migwp_unpack_stream_plain_chunks( $db_handle, $db_state );
 	$db_plain_chunks->rewind();
 
-	$decoded_relative = flywp_unpack_sql_relative_path( $db_relative_path );
-	$sql_path         = flywp_unpack_output_path( $target_dir, $decoded_relative );
-	flywp_unpack_mkdir( dirname( $sql_path ) );
+	$decoded_relative = migwp_unpack_sql_relative_path( $db_relative_path );
+	$sql_path         = migwp_unpack_output_path( $target_dir, $decoded_relative );
+	migwp_unpack_mkdir( dirname( $sql_path ) );
 
 	$sql_handle = fopen( $sql_path, 'wb' );
 	if ( false === $sql_handle ) {
@@ -390,20 +390,20 @@ function flywp_unpack_decrypt_database_dump( $encrypted_dump_path, $migration_ke
 	];
 }
 
-function flywp_unpack_extract_snapshot( $artifact, $migration_key, $output_dir, $observer = null ) {
+function migwp_unpack_extract_snapshot( $artifact, $migration_key, $output_dir, $observer = null ) {
 	foreach ( [ 'sodium', 'zlib' ] as $extension ) {
 		if ( ! extension_loaded( $extension ) ) {
 			throw new RuntimeException( "Missing required PHP extension: {$extension}" );
 		}
 	}
 
-	flywp_unpack_mkdir( $output_dir );
+	migwp_unpack_mkdir( $output_dir );
 
-	$archive             = flywp_unpack_load_archive_header( $artifact, $migration_key );
+	$archive             = migwp_unpack_load_archive_header( $artifact, $migration_key );
 	$fp                  = $archive['handle'];
 	$header              = $archive['header'];
 	$payload_state       = $archive['payload_state'];
-	$plain_chunks        = flywp_unpack_stream_plain_chunks( $fp, $payload_state );
+	$plain_chunks        = migwp_unpack_stream_plain_chunks( $fp, $payload_state );
 	$expected_entries    = (int) ( $header['total_files'] ?? 0 ) + (int) ( $header['total_directories'] ?? 0 );
 	$entry_count         = 0;
 	$verified_files      = 0;
@@ -443,11 +443,11 @@ function flywp_unpack_extract_snapshot( $artifact, $migration_key, $output_dir, 
 				throw new RuntimeException( 'Entry path length does not match header.' );
 			}
 
-			$path       = flywp_unpack_normalize_relative_path( $path );
-			$target_path = flywp_unpack_output_path( $output_dir, $path );
+			$path       = migwp_unpack_normalize_relative_path( $path );
+			$target_path = migwp_unpack_output_path( $output_dir, $path );
 			$entry_count++;
 
-			flywp_unpack_notify(
+			migwp_unpack_notify(
 				$observer,
 				'entry.header',
 				[
@@ -460,9 +460,9 @@ function flywp_unpack_extract_snapshot( $artifact, $migration_key, $output_dir, 
 			);
 
 			if ( 0 === $type ) {
-				flywp_unpack_mkdir( $target_path );
+				migwp_unpack_mkdir( $target_path );
 				$verified_directories++;
-				flywp_unpack_notify(
+				migwp_unpack_notify(
 					$observer,
 					'entry.directory',
 					[
@@ -476,7 +476,7 @@ function flywp_unpack_extract_snapshot( $artifact, $migration_key, $output_dir, 
 				continue;
 			}
 
-			flywp_unpack_mkdir( dirname( $target_path ) );
+			migwp_unpack_mkdir( dirname( $target_path ) );
 
 			$hash_ctx       = hash_init( 'sha256' );
 			$remaining      = $payload_size;
@@ -534,14 +534,14 @@ function flywp_unpack_extract_snapshot( $artifact, $migration_key, $output_dir, 
 			}
 
 			if ( 2 === $type ) {
-				flywp_unpack_stream_gzip_file_to_file( $temp_path, $target_path );
+				migwp_unpack_stream_gzip_file_to_file( $temp_path, $target_path );
 				@unlink( $temp_path );
 				$compressed_files++;
 			}
 
 			$verified_files++;
 
-			flywp_unpack_notify(
+			migwp_unpack_notify(
 				$observer,
 				'entry.file',
 				[
@@ -557,7 +557,7 @@ function flywp_unpack_extract_snapshot( $artifact, $migration_key, $output_dir, 
 			);
 
 			if ( $is_embedded_db ) {
-				$embedded_dump_info = flywp_unpack_decrypt_database_dump(
+				$embedded_dump_info = migwp_unpack_decrypt_database_dump(
 					$target_path,
 					$migration_key,
 					$output_dir,
@@ -593,12 +593,12 @@ function flywp_unpack_extract_snapshot( $artifact, $migration_key, $output_dir, 
 		'embedded_database'      => $embedded_dump_info,
 	];
 
-	flywp_unpack_notify( $observer, 'complete', $result );
+	migwp_unpack_notify( $observer, 'complete', $result );
 
 	return $result;
 }
 
-function flywp_unpack_notify( $observer, $event, array $payload ) {
+function migwp_unpack_notify( $observer, $event, array $payload ) {
 	if ( null !== $observer ) {
 		call_user_func( $observer, $event, $payload );
 	}
