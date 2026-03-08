@@ -2,7 +2,7 @@
 
 ## Overview
 
-`flywp-migrator` is a source-side snapshot plugin for WordPress.
+`migwp-migrator` is a source-side snapshot plugin for WordPress.
 
 It is REST-driven. An admin page may exist, but snapshot creation and transfer should not depend on the admin UI.
 
@@ -21,8 +21,8 @@ The final artifact is downloaded through the existing chunked file endpoints.
 
 Plugin bootstrap:
 
-- entry file: [flywp-migrator.php](/home/ingo/flywp-migrator/flywp-migrator.php)
-- main plugin class: [includes/Plugin.php](/home/ingo/flywp-migrator/includes/Plugin.php)
+- entry file: [migwp-migrator.php](../migwp-migrator.php)
+- main plugin class: [includes/Plugin.php](../includes/Plugin.php)
 
 Important plugin hooks:
 
@@ -34,7 +34,7 @@ Important plugin hooks:
 
 Long-lived state:
 
-- migration key in option `flywp_migration_key`
+- migration key in option `migwp_migration_key`
 - snapshot config in persistent plugin storage
 
 Runtime state:
@@ -49,16 +49,16 @@ The rewrite should avoid frequent WordPress option updates during long-running j
 
 Namespace:
 
-- `flywp-migrator/v1`
+- `migwp-migrator/v1`
 
 Current main coordinator:
 
-- [includes/Api.php](/home/ingo/flywp-migrator/includes/Api.php)
+- [includes/Api.php](../includes/Api.php)
 
 Current submodules:
 
-- [includes/Api/Database.php](/home/ingo/flywp-migrator/includes/Api/Database.php)
-- [includes/Api/Files.php](/home/ingo/flywp-migrator/includes/Api/Files.php)
+- [includes/Api/Database.php](../includes/Api/Database.php)
+- [includes/Api/Files.php](../includes/Api/Files.php)
 
 The rewrite target is to move from dump-oriented and zip-oriented exports to snapshot-oriented jobs.
 
@@ -83,7 +83,7 @@ Permission callback:
 
 Accepted credentials:
 
-- `X-FlyWP-Key`
+- `X-MigWP-Key`
 - `secret`
 
 ## Frozen Snapshot Endpoints
@@ -242,7 +242,7 @@ The final filesystem snapshot should be stored under a long secret relative path
 
 Example shape:
 
-- `wp-content/uploads/flywp-migrator/snapshots/<snapshot-id>/<unguessable-name>.fwsnap`
+- `wp-content/uploads/migwp-migrator/snapshots/<snapshot-id>/<unguessable-name>.fwsnap`
 
 That path must be returned only by:
 
@@ -301,7 +301,7 @@ This avoids expensive WordPress state writes during large loops.
 
 Recommended test layers:
 
-1. local `wp-env` endpoint verification
+1. local wp-env endpoint verification (main site port 8888, tests port 8889)
 2. direct HTTP testing of:
    - `/snapshot/database`
    - `/snapshot/filesystem`

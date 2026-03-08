@@ -13,11 +13,27 @@ The frozen v1 test target is:
 
 ## Local Runtime
 
-This repository already includes:
+This repository includes [`.wp-env.json`](../.wp-env.json) for local development.
 
-- [`.wp-env.json`](/home/ingo/flywp-migrator/.wp-env.json)
+### wp-env Container Layout
 
-Recommended local runtime:
+`wp-env start` creates (typically via Podman or Docker):
+
+| Port | Service |
+|------|---------|
+| 8888 | Main WordPress site |
+| 8889 | Tests WordPress site |
+
+Each environment: WordPress container, MariaDB, CLI container. The plugin is loaded via `"plugins": ["."]` in `.wp-env.json`.
+
+### Execution Model
+
+- **Plugin** runs inside wp-env (WordPress in container), exposes REST API
+- **pull.php** runs on the host, connects via HTTP to `http://localhost:8888` (or `8889`)
+
+`tools/pull-config.json` (from `pull-config.example.json`) must contain `base_url`, `rest_root`, and `migration_key`.
+
+### Recommended local runtime
 
 1. start `wp-env`
 2. activate the plugin

@@ -4,15 +4,15 @@
 
 Implement the frozen snapshot architecture described in:
 
-- [AGENT.md](/home/ingo/flywp-migrator/docs/AGENT.md)
-- [ARCHITECTURE.md](/home/ingo/flywp-migrator/docs/ARCHITECTURE.md)
-- [TESTING.md](/home/ingo/flywp-migrator/docs/TESTING.md)
+- [AGENT.md](AGENT.md)
+- [ARCHITECTURE.md](ARCHITECTURE.md)
+- [TESTING.md](TESTING.md)
 
 ## First Build Order
 
 1. Replace the current database export API model.
 
-- remove the old dump-job behavior in [includes/Api/Database.php](/home/ingo/flywp-migrator/includes/Api/Database.php)
+- remove the old dump-job behavior in [includes/Api/Database.php](../includes/Api/Database.php)
 - implement singular endpoints:
   - `POST /snapshot/database`
   - `GET /snapshot/database`
@@ -126,7 +126,7 @@ Likely new folders:
 
 ## Local Environment Notes
 
-- In this workspace, `wp-env` under Podman was unstable on the main site port
-- the test site instance on port `8889` was usable for local validation
-- the current puller test config reflects that local setup
+- wp-env runs under Podman (or Docker); `podman ps` / `docker ps` shows the containers
+- Main site: `http://localhost:8888`, tests site: `http://localhost:8889`
+- Plugin runs inside wp-env; `pull.php` runs on the host and uses `base_url` in `tools/pull-config.json`
 
