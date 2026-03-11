@@ -17,19 +17,26 @@ This repository includes [`.wp-env.json`](../.wp-env.json) for local development
 
 ### wp-env Container Layout
 
-`wp-env start` creates (typically via Podman or Docker):
+`wp-env start` creates (via Docker):
 
 | Port | Service |
 |------|---------|
-| 8888 | Main WordPress site |
-| 8889 | Tests WordPress site |
+| 8888 | WordPress site |
 
-Each environment: WordPress container, MariaDB, CLI container. The plugin is loaded via `"plugins": ["."]` in `.wp-env.json`.
+Each environment: WordPress container, MariaDB, CLI container. With `testsEnvironment: false` only the main site runs. The plugin is loaded via `"plugins": ["."]` in `.wp-env.json`.
+
+**Troubleshooting:** If `wp-env start` fails with "container name is already in use", remove leftover containers first:
+
+```bash
+wp-env destroy --yes   # if wp-env recognizes the env
+# Or manually: docker rm -f $(docker ps -aq)  # removes all stopped containers
+wp-env start
+```
 
 ### Execution Model
 
 - **Plugin** runs inside wp-env (WordPress in container), exposes REST API
-- **pull.php** runs on the host, connects via HTTP to `http://localhost:8888` (or `8889`)
+- **pull.php** runs on the host, connects via HTTP to `http://localhost:8888`
 
 `tools/pull-config.json` (from `pull-config.example.json`) must contain `base_url`, `rest_root`, and `migration_key`.
 

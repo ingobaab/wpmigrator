@@ -126,7 +126,7 @@ Likely new folders:
 
 ## Local Environment Notes
 
-- wp-env runs under Podman (or Docker); `podman ps` / `docker ps` shows the containers
-- Main site: `http://localhost:8888`, tests site: `http://localhost:8889`
+- wp-env runs under Docker; `docker ps` shows the containers
+- Main site: `http://localhost:8888` (with `testsEnvironment: false` only this site runs)
 - Plugin runs inside wp-env; `pull.php` runs on the host and uses `base_url` in `tools/pull-config.json`
 

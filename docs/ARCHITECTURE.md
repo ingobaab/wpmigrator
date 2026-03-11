@@ -301,7 +301,7 @@ This avoids expensive WordPress state writes during large loops.
 
 Recommended test layers:
 
-1. local wp-env endpoint verification (main site port 8888, tests port 8889)
+1. local wp-env endpoint verification (port 8888)
 2. direct HTTP testing of:
    - `/snapshot/database`
    - `/snapshot/filesystem`
